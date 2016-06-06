@@ -1,8 +1,10 @@
 #!/bin/bash
 
+# git config --global credential.helper cache
+
 if [ $# == 1 ];then
 	apt-get install git vim tmux
-	cat vimrc >> /etc/vim/vimrc
+	cat vimrc > /etc/vim/vimrc
 
 	git config user.name 141242068-ouxianfei
 	git config user.email 141242068@smail.nju.edu.cn
