@@ -2,12 +2,14 @@
 
 html="/home/wierton/cn.bing.html"
 path="/home/wierton/Pictures/bing/"
-his="/home/wierton/wall.his"
+his="/home/wierton/.wallpaper_history"
 
 date=`date +%D`
 if [ `grep -c "$date" "$his"` -gt 0 ];then
 	exit
 fi
+
+sleep 30
 
 ping -q -c 4 cn.bing.com &>/dev/null
 if [ "$?" != "0" ];then
@@ -22,5 +24,6 @@ name=`echo $pa_str | grep -o "[^\\/]\+$"`
 wget -q $url -O $path$name
 gsettings set org.gnome.desktop.background picture-uri "file:"$path$name
 basename=`echo $name | sed "s/\(\.jpg\)//g"`
-notify-send -t 30000 -i $path$name "今天的壁纸是："$basename
+notify-send -t 30000 -i $path$name "今天的壁纸是：" "$basename"
+paplay /usr/share/sounds/ubuntu/ringtones/Celestial.ogg
 echo $date >> $his
