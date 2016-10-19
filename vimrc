@@ -52,6 +52,8 @@ if filereadable("/etc/vim/vimrc.local")
   source /etc/vim/vimrc.local
 endif
 
+map pdf :!file=%;if [ "${file\#\#*.}" == "tex" ];then xelatex $file &>/dev/null && evince ${file/\%.tex/.pdf} &> /dev/null; fi <CR> <CR>
+
 setlocal noswapfile 
 set bufhidden=hide 
 set nocompatible 
