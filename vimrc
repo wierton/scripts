@@ -52,7 +52,27 @@ if filereadable("/etc/vim/vimrc.local")
   source /etc/vim/vimrc.local
 endif
 
-map pdf :!file=%;if [ "${file\#\#*.}" == "tex" ];then xelatex $file &>/dev/null && evince ${file/\%.tex/.pdf} &> /dev/null; fi <CR> <CR>
+func! CompileRun()
+	if expand('%:t') != ''
+		exec "w"
+	endif
+	if &filetype == 'c'
+		exec "!gcc % -o %< && ./%<"
+	elseif &filetype == 'cpp'
+		exec "!g++ % -o %< && ./%<"
+	elseif &filetype == 'python'
+		exec "!python %"
+	elseif &filetype == 'make'
+		exec "!make"
+	elseif &filetype == 'html'
+		exec "!google-chrome-stable %"
+	elseif &filetype == 'sh'
+		exec "!bash %"
+	endif
+endfunc
+
+map <F2> :! file=%;if [ "${file\#\#*.}" == "tex" ];then xelatex $file && evince ${file/\%.tex/.pdf} &> /dev/null; fi <CR> <CR>
+map <F5> :call CompileRun() <CR>
 
 setlocal noswapfile 
 set bufhidden=hide 
