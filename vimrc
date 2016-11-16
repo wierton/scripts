@@ -52,6 +52,21 @@ if filereadable("/etc/vim/vimrc.local")
   source /etc/vim/vimrc.local
 endif
 
+func! LoadCtags()
+	if filereadable("ctags")
+		exec ":set tag=tags"
+	endif
+	let tagfile = "../tags"
+	for i in [1, 2, 3]
+		if filereadable(tagfile)
+			exec ":set tag=".tagfile
+			return
+		else
+			let tagfile = "../".tagfile
+		endif
+	endfor
+endfunc
+
 func! CompileRun()
 	if expand('%:t') != ''
 		exec "w"
@@ -68,12 +83,17 @@ func! CompileRun()
 		exec "!google-chrome-stable %"
 	elseif &filetype == 'sh'
 		exec "!bash %"
+	elseif &filetype == 'php'
+		exec "!php %"
 	endif
 endfunc
 
-map <F2> :! file=%;if [ "${file\#\#*.}" == "tex" ];then xelatex $file && evince ${file/\%.tex/.pdf} &> /dev/null; fi <CR> <CR>
-map <F5> :call CompileRun() <CR>
 
+map <F2> :! file=%;if [ "${file\#\#*.}" == "tex" ];then xelatex $file && evince ${file/\%.tex/.pdf} &> /dev/null; fi <CR> <CR>
+inoremap <F5> :call CompileRun() <CR>
+nnoremap <F5> <Esc>:call CompileRun() <CR>
+
+autocmd FileType * :call LoadCtags()
 setlocal noswapfile 
 set bufhidden=hide 
 set nocompatible 
