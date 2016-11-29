@@ -90,8 +90,10 @@ endfunc
 
 
 map <F2> :! file=%;if [ "${file\#\#*.}" == "tex" ];then xelatex $file && evince ${file/\%.tex/.pdf} &> /dev/null; fi <CR> <CR>
-inoremap <F5> :call CompileRun() <CR>
+inoremap <F5> <Esc>:call CompileRun() <CR>
 nnoremap <F5> <Esc>:call CompileRun() <CR>
+nnoremap <C-l> :exec "!yd ".expand("<cword>") <CR>
+vnoremap <C-l> y:exec "!yd ".getreg("0") <CR>
 
 autocmd FileType * :call LoadCtags()
 setlocal noswapfile 
