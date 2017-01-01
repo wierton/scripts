@@ -14,7 +14,15 @@ if [ $# == 1 ];then
 fi
 
 for args in $*;do
-	if [ "$args" == "video" ];then
-		apt-get install libsdl1.2-dev
-	fi
+	case "$args" in
+		"video")
+			apt-get install libsdl1.2-dev
+			;;
+		"tmux")
+			cat ./.tmux.conf >> ~/.tmux.conf
+			mkdir ~/.tmux
+			cd ~/.tmux
+			git clone https://github.com/tmux-plugins/tmux-resurrect.git
+			#<C-b> <C-s>, <C-b> <C-r>
+	esac
 done
