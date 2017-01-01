@@ -24,5 +24,10 @@ for args in $*;do
 			cd ~/.tmux
 			git clone https://github.com/tmux-plugins/tmux-resurrect.git
 			#<C-b> <C-s>, <C-b> <C-r>
+			;;
+		"numlock")
+			apt-get install numlockx
+			echo "numlockx on" >> /etc/profile
+			;;
 	esac
 done
