@@ -1,0 +1,22 @@
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda7 during installation
+UUID=1af11e3e-13ed-451c-89bf-80875eefdca8 /               ext4    errors=remount-ro 0       1
+# swap was on /dev/sda8 during installation
+UUID=1062531e-cfb8-43fc-bcc3-51d4af7ee9fb none            swap    sw              0       0
+/dev/sda1  /C  ntfs  defaults 0 0
+/dev/sda5  /D  ntfs  defaults 0 0
+/dev/sda6  /E  ntfs  defaults 0 0
+
+# options fmask,dmask,umask for fstab
+# file mask, directory mask, user mask
+# 3 numbers : user, user's group, other groups
+#     0   1   2   3   4   5   6   7
+# r   +   +   +   +   -   -   -   -
+# w   +   +   -   -   +   +   -   -
+# x   +   -   +   -   +   -   +   -
+# /etc/fstab: static file system information.
+#

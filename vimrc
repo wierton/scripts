@@ -95,6 +95,9 @@ nnoremap <F5> <Esc>:call CompileRun() <CR>
 nnoremap <C-l> :exec "!yd ".expand("<cword>") <CR>
 vnoremap <C-l> y:exec "!yd ".getreg("0") <CR>
 
+noremap + <C-w>+
+noremap - <C-w>-
+
 autocmd FileType * :call LoadCtags()
 setlocal noswapfile 
 set bufhidden=hide 
@@ -126,8 +129,8 @@ set backspace=indent,eol,start
 set cmdheight=1 
 set laststatus=2 
 set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ Ln\ %l,\ Col\ %c/%L%) 
-set foldenable 
-set foldmethod=syntax 
-set foldcolumn=0 
-setlocal foldlevel=1 
+"set foldenable 
+"set foldmethod=syntax 
+"set foldcolumn=0 
+"setlocal foldlevel=1 
 nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR> 
