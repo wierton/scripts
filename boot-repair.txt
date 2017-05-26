@@ -1,0 +1,20 @@
+https://askubuntu.com/questions/254491/failed-to-get-canonical-path-of-cow
+
+ubuntu14.04
+===========
+mount /dev/sda1 /mnt
+chroot /mnt
+update-grub2
+
+Ubuntu 16.04
+============
+mount /dev/sdb7 /mnt
+for dir in /dev /dev/pts /proc /sys /run; do
+    mount --bind $dir /mnt$dir
+done
+chroot /mnt
+update-grub2
+
+sudo add-apt-repository ppa:yannubuntu/boot-repair
+sudo apt-get update
+sudo apt-get install -y boot-repair && boot-repair

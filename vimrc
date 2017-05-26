@@ -77,6 +77,9 @@ func! CompileRun()
 		exec "!g++ % -o %< && ./%<"
 	elseif &filetype == 'python'
 		exec "!python %"
+	elseif &filetype == 'tex'
+		let pdfname = expand("%:r").".pdf"
+		exec "!xelatex % ".pdfname."&& evince ".pdfname." &> /dev/null"
 	elseif &filetype == 'make'
 		exec "!make"
 	elseif &filetype == 'html'
@@ -88,12 +91,11 @@ func! CompileRun()
 	endif
 endfunc
 
-
-map <F2> :! file=%;if [ "${file\#\#*.}" == "tex" ];then xelatex $file && evince ${file/\%.tex/.pdf} &> /dev/null; fi <CR> <CR>
 inoremap <F5> <Esc>:call CompileRun() <CR>
 nnoremap <F5> <Esc>:call CompileRun() <CR>
-nnoremap <C-l> :exec "!yd ".expand("<cword>") <CR>
-vnoremap <C-l> y:exec "!yd ".getreg("0") <CR>
+nnoremap <C-l> :exec "!yd ".substitute(expand("<cword>"), "\n", " ", "g") <CR>
+vnoremap <C-l> y:exec "!yd ".substitute(getreg("0"), "\n", " ", "g") <CR>
+nnoremap <C-k> <Esc>gg!Gclang-format<CR>gg=G:%s/\(if\\|while\\|for\) (/\1(/g<CR>
 
 noremap + <C-w>+
 noremap - <C-w>-

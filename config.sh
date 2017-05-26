@@ -29,5 +29,8 @@ for args in $*;do
 			apt-get install numlockx
 			echo "numlockx on" >> /etc/profile
 			;;
+		"pthread-doc")
+			apt-get install manpages-posix manpages-posix-dev
+			;;
 	esac
 done
