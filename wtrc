@@ -1,0 +1,32 @@
+#!bin/bash
+
+#java
+export JAVA_HOME=/E/java/jdk1.8.0_101
+PATH="$PATH:/E/java/jdk1.8.0_101/bin"
+
+#android SDK
+export ANDROID_HOME=/E/java/android-sdk-linux
+PATH="$PATH:/E/java/android-sdk-linux"
+PATH="$PATH:/E/java/android-sdk-linux/tools"
+PATH="$PATH:/E/java/android-sdk-linux/platform-tools"
+
+# virtualenv and virtualenvwrapper
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+export WORKON_HOME=$HOME/.virtualenvs
+source /usr/local/bin/virtualenvwrapper.sh
+
+export HADOOP_CLASSPATH=${JAVA_HOME}/lib/tools.jar
+PATH="$PATH:/E/hadoop/bin"
+# eval $(thefuck --alias)
+
+alias mgcc=mips-linux-gnu-gcc
+alias mg++=mips-linux-gnu-g++
+alias mstrip=mips-linux-gnu-strip
+alias mobjdump=mips-linux-gnu-objdump
+alias mreadelf=mips-linux-gnu-readelf
+
+PATH="$PATH:/usr/local/mipsel/bin"
+
+export AM_HOME=/home/wierton/nexus-am
+
+alias vimelf='vim /usr/include/elf.h'
