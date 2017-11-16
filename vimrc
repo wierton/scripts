@@ -219,7 +219,7 @@ function! WatchForChanges(bufname, ...)
   elseif l:defined
     let msg = msg . 'Already watching ' . bufspec . ' for external updates'
   end
-  echo msg
+  " echo msg
   let @"=reg_saved
 endfunction
 
