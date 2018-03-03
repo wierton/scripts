@@ -12,6 +12,7 @@ wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | apt-key a
 wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | apt-key add - # virtualbox
 apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" # clang-5.0
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - # clang-5.0
+add-apt-repository -y ppa:hzwhuang/ss-qt5 # shadowsocks-qt5
 apt-get update
 
 # curl
@@ -26,7 +27,7 @@ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 50
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 50
 
 # shadowsocks
-apt-get install -y shadowsocks
+apt-get install -y shadowsocks-qt5 
 
 # virtualbox
 apt-get install -y virtualbox-5.2
@@ -45,12 +46,12 @@ git config --global color.ui true
 git config --global push.default simple
 '
 sudo -S -u ${username} sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-chsh -s $(which zsh)
+chsh -s $(which zsh) ${username}
 
 # numlock
 apt-get install -y numlockx
 if ! grep "numlockx on" /etc/profile; then
-echo "numlockx on" >> /etc/profile
+	echo "numlockx on" >> /etc/profile
 fi
 
 # cppman
@@ -73,17 +74,22 @@ sudo -S -u ${username} sh -c '(mkdir ${homedir}/.tmux &&
 apt-get install -y libsdl1.2-dev libsdl2-dev
 
 # cmake-3.10
-apt-get install cmake
-wget http://www.cmake.org/files/v3.10/cmake-3.10.1.tar.gz 
-tar -xvzf cmake-3.10.1.tar.gz 
-(su - ${username} && cd cmake-3.10.1/ && cmake . && make && sudo make install)
+(version=3.10
+build=2
+wget https://cmake.org/files/v$version/cmake-$version.$build.tar.gz
+tar -xzvf cmake-$version.$build.tar.gz
+cd cmake-$version.$build/
+./bootstrap
+make -j4
+sudo make install
+)
 
 # cross chain
 apt-get install -y binutils-mips-linux-gnu
 apt-get install -y cpp-mips-linux-gnu
 apt-get install -y g++-mips-linux-gnu
 apt-get install -y gcc-mips-linux-gnu
-apt-get install -y gcc-mips-linux-gnu-base
+# apt-get install -y gcc-mips-linux-gnu-base
 
 # scala rust
 apt-get install -y scala
