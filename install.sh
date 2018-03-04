@@ -26,6 +26,10 @@ apt-get install -y gcc-7 g++-7
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 50
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 50
 
+# multilib
+apt-get install gcc-7-multilib
+apt-get install g++-7-multilib
+
 # shadowsocks
 apt-get install -y shadowsocks-qt5 
 
