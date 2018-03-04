@@ -15,8 +15,8 @@ wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - # clang-5.0
 add-apt-repository -y ppa:hzwhuang/ss-qt5 # shadowsocks-qt5
 apt-get update
 
-# curl
-apt-get install -y curl
+# curl and httpie
+apt-get install -y curl httpie
 
 # indicator-stickynotes
 apt-get install -y indicator-stickynotes
