@@ -5,6 +5,11 @@ username=wierton
 homedir=${homedir}
 cd ${homedir}
 
+# some backups
+# ${homedir}/.config/indicator-stickynotes
+# ${homedir}/.config/shadowsocks-qt5/*
+# ${homedir}/.ssh/*  (public key and private key)
+
 # add-apt-repository
 add-apt-repository -y ppa:umang/indicator-stickynotes
 add-apt-repository -y ppa:ubuntu-toolchain-r/test # gcc-7
@@ -14,6 +19,17 @@ apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 ma
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - # clang-5.0
 add-apt-repository -y ppa:hzwhuang/ss-qt5 # shadowsocks-qt5
 apt-get update
+
+apt-get install -y liballegro5-dev
+
+# boost
+apt-get install -y libboost-all-dev
+
+# readline
+apt-get install -y libreadline-dev
+
+# debugging tools
+apt-get install -y valgrind
 
 # curl and httpie
 apt-get install -y curl httpie
@@ -76,6 +92,11 @@ sudo -S -u ${username} sh -c '(mkdir ${homedir}/.tmux &&
 
 # libsdl
 apt-get install -y libsdl1.2-dev libsdl2-dev
+apt-get install -y libgtk2.0-dev
+apt-get install -y libgtk-3-dev
+
+apt-get install -y lib32readline-dev
+apt-get install -y libsdl-1.2debian:i386
 
 # cmake-3.10
 (version=3.10
