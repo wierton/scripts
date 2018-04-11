@@ -133,6 +133,11 @@ pip2 install numpy && pip3 install numpy
 pip2 install scipy && pip3 install scipy
 pip2 install tensorflow && pip3 install tensorflow
 
+# for idaq
+apt-get install -y libfontconfig1:i386
+apt-get install -y libxrender1:i386
+apt-get install -y libglib2.0-0:i386
+
 # docker
 apt-get install -y docker.io
 apt-get install -y docker-compose

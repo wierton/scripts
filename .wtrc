@@ -1,0 +1,70 @@
+#!bin/bash
+
+
+function sedr() {
+	sed -i "s/$1/$2/g" `grep -rl "$1"`
+	return $?
+}
+
+function renamer() {
+	rename "s/$1/$2/g" `find . -name "*$1*"`
+	return $?
+}
+
+export RCGEN_HOME=/home/wierton/rcgen
+function wgc() {
+	gcc -w $1.c -o $1 -I ${RCGEN_HOME} && ./$1
+}
+
+
+#java
+export JAVA_HOME=/D/java/jdk1.8.0_101
+PATH="$PATH:/D/java/jdk1.8.0_101/bin"
+
+#android SDK
+export ANDROID_HOME=/D/java/android-sdk-linux
+PATH="$PATH:/D/java/android-sdk-linux"
+PATH="$PATH:/D/java/android-sdk-linux/tools"
+PATH="$PATH:/D/java/android-sdk-linux/platform-tools"
+
+#
+PATH="$PATH:/opt/gcc-4.3-ls232/bin"
+
+# Vivado
+PATH="$PATH:/D/vivado/Vivado/2017.1/bin"
+
+# virtualenv and virtualenvwrapper
+#export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+#export WORKON_HOME=$HOME/.virtualenvs
+#source /usr/local/bin/virtualenvwrapper.sh
+
+export HADOOP_CLASSPATH=${JAVA_HOME}/lib/tools.jar
+PATH="$PATH:/D/hadoop/bin"
+# eval $(thefuck --alias)
+
+alias mgcc=mips-linux-gnu-gcc
+alias mg++=mips-linux-gnu-g++
+alias mstrip=mips-linux-gnu-strip
+alias mobjdump=mips-linux-gnu-objdump
+alias mreadelf=mips-linux-gnu-readelf
+
+PATH="$PATH:/usr/local/mipsel/bin"
+
+export NOOP_HOME=/home/wierton/noop
+export AM_HOME=/home/wierton/nexus-am
+export NAVY_HOME=/home/wierton/navy-apps
+export MIPS32_NEMU_HOME=/path/to/mips32-nemu
+export CPU_PATH=/home/wierton/noop_test/
+export CPU_IMG=noop.tcl
+export RISCV=/usr/local/riscv
+
+alias vimelf="vim /usr/include/elf.h"
+export PATH="$PATH:${RISCV}:/D/IDA_Linux_v6.4"
+
+#export ZSH_THEME=aussiegeek
+export ZSH_THEME=wierton
+
+export PATH="$PATH:/home/wierton/.local/bin"
+export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
+
+alias minecraft="(nohup minecraft dev/null &>/dev/null &)"
