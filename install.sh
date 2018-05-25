@@ -142,6 +142,11 @@ pip2 install numpy && pip3 install numpy
 pip2 install scipy && pip3 install scipy
 pip2 install tensorflow && pip3 install tensorflow
 
+# python-sql
+apt-get -y install mysql-server
+apt-get -y install python-dev 
+apt-get -y install python-mysqldb
+
 # for idaq
 apt-get install -y libfontconfig1:i386
 apt-get install -y libxrender1:i386
