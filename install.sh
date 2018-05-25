@@ -91,14 +91,11 @@ fi
 # cppman
 apt-get install -y cppman
 
+# vimrc
+cp ./vimrc  ${homedir}/.vimrc
+
 # tmux
-echo 'bind [ copy-mode
-bind -t vi-copy v begin-selection
-bind -t vi-copy y copy-selection
-bind ] pasteb
-setw -g mode-keys vi
-run-shell ${homedir}/.tmux/tmux-resurrect/resurrect.tmux
-' > ${homedir}/.tmux.conf
+cp ./tmux.conf ${homedir}/.tmux.conf
 sudo -S -u ${username} sh -c '(mkdir ${homedir}/.tmux &&
 	cd ${homedir}/.tmux &&
 	git clone https://github.com/tmux-plugins/tmux-resurrect.git)'
