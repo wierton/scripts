@@ -5,16 +5,21 @@ username=wierton
 homedir=${homedir}
 cd ${homedir}
 
-echo '
+# essential: git tmux(tmux.conf) vim(vimrc)
+
+# install tex
+# ===========
 # install synaptic
 # search for `texlive-full` `texlive` and `lyx` and then install all suggested packages
 # texmaker IDE in ubuntu
-'
+
 
 # some backups
+# ============
 # ${homedir}/.config/indicator-stickynotes
 # ${homedir}/.config/shadowsocks-qt5/*
 # ${homedir}/.ssh/*  (public key and private key)
+
 
 # add-apt-repository
 add-apt-repository -y ppa:umang/indicator-stickynotes
