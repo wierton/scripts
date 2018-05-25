@@ -5,6 +5,12 @@ username=wierton
 homedir=${homedir}
 cd ${homedir}
 
+echo '
+# install synaptic
+# search for `texlive-full` `texlive` and `lyx` and then install all suggested packages
+# texmaker IDE in ubuntu
+'
+
 # some backups
 # ${homedir}/.config/indicator-stickynotes
 # ${homedir}/.config/shadowsocks-qt5/*
@@ -21,6 +27,9 @@ add-apt-repository -y ppa:hzwhuang/ss-qt5 # shadowsocks-qt5
 apt-get update
 
 apt-get install -y liballegro5-dev
+
+# verilator
+apt-get install -y verilator
 
 # boost
 apt-get install -y libboost-all-dev
