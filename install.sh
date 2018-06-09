@@ -39,6 +39,10 @@ apt-get install -y verilator
 # boost
 apt-get install -y libboost-all-dev
 
+# llvm and clang
+apt-get install -y libllvm-6.0
+apt-get install -y libclang-6.0
+
 # readline
 apt-get install -y libreadline-dev
 

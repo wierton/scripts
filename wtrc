@@ -1,5 +1,6 @@
 #!bin/bash
 
+export WT_HOME=/home/wierton
 
 function sedr() {
 	sed -i "s/$1/$2/g" `grep -rl "$1"`
@@ -11,7 +12,12 @@ function renamer() {
 	return $?
 }
 
-export RCGEN_HOME=/home/wierton/rcgen
+function banio() {
+	nohup $* </dev/null 1>/dev/null 2>&1 &
+	return $?
+}
+
+export RCGEN_HOME=${WT_HOME}/rcgen
 function wgc() {
 	gcc -w $1.c -o $1 -I ${RCGEN_HOME} && ./$1
 }
@@ -31,7 +37,7 @@ PATH="$PATH:/D/java/android-sdk-linux/platform-tools"
 PATH="$PATH:/opt/gcc-4.3-ls232/bin"
 
 # Vivado
-# PATH="$PATH:/opt/Xilinx/Vivado/2018.1/bin/vivado"
+PATH="$PATH:/opt/Xilinx/Vivado/2018.1/bin"
 
 # virtualenv and virtualenvwrapper
 #export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
@@ -48,12 +54,14 @@ alias mstrip=mips-linux-gnu-strip
 alias mobjdump=mips-linux-gnu-objdump
 alias mreadelf=mips-linux-gnu-readelf
 
-export NOOP_HOME=/home/wierton/noop
-export AM_HOME=/home/wierton/nexus-am
-export NAVY_HOME=/home/wierton/navy-apps
-export MIPS32_NEMU_HOME=/home/wierton/mips32-nemu
-export CPU_PATH=/home/wierton/noop_test/
+export NOOP_HOME=${WT_HOME}/noop
+export AM_HOME=${WT_HOME}/nexus-am
+export NAVY_HOME=${WT_HOME}/navy-apps
+export MIPS32_NEMU_HOME=${WT_HOME}/nemu-mips32
+# export CPU_PATH=${WT_HOME}/noop.17.bin/
+export CPU_PATH=${WT_HOME}/lgz-noop/
 export CPU_IMG=noop.tcl
+export NPC_HOME=${WT_HOME}/noop-lo
 export RISCV=/usr/local/riscv
 
 alias vimelf="vim /usr/include/elf.h"
@@ -62,9 +70,14 @@ export PATH="$PATH:${RISCV}:/D/IDA_Linux_v6.4"
 #export ZSH_THEME=aussiegeek
 export ZSH_THEME=wierton
 
-export PATH="$PATH:/home/wierton/.local/bin"
+export PATH="$PATH:${WT_HOME}/.local/bin"
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
+alias jllvm="cd ${WT_HOME}/llvm/llvm/include/llvm"
+alias jclang="cd ${WT_HOME}/llvm/llvm/tools/clang"
 alias sudo-guard="sudo sh -c exit"
-alias minecraft="(nohup minecraft dev/null &>/dev/null &)"
-alias netease-cloud-music="(sudo-guard && sudo nohup netease-cloud-music /dev/null 1> /dev/null 2>1 &)"
+alias open-psmouse="sudo-guard && sudo modprobe -i psmouse"
+alias close-psmouse="sudo-guard && sudo modprobe -r psmouse"
+alias minecraft="(banio minecraft)"
+alias netease-cloud-music="(sudo-guard && sudo nohup netease-cloud-music </dev/null 1>/dev/null 2>&1 &)"
+alias vivado="(cd ~/tmp && banio vivado)"
