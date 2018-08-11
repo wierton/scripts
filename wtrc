@@ -33,12 +33,13 @@ PATH="$PATH:/D/java/android-sdk-linux"
 PATH="$PATH:/D/java/android-sdk-linux/tools"
 PATH="$PATH:/D/java/android-sdk-linux/platform-tools"
 
-#
+# loongson gcc
 PATH="$PATH:/opt/gcc-4.3-ls232/bin"
 
 # Vivado
-# PATH="$PATH:/opt/Xilinx/Vivado/2018.1/bin"
-PATH="$PATH:/opt/Xilinx/Vivado/2017.4/bin"
+PATH="$PATH:/opt/Xilinx/Vivado/2018.1/bin"
+# PATH="$PATH:/opt/Xilinx/Vivado/2017.4/bin"
+XILINX_VIVADO="/opt/Xilinx/Vivado/2017.4/"
 alias vivado-batch="vivado -nolog -nojournal -notrace -mode batch -source"
 
 # virtualenv and virtualenvwrapper
@@ -70,6 +71,7 @@ export MIPS32_NEMU_HOME=${WT_HOME}/nemu-mips32
 export CPU_PATH=${WT_HOME}/lgz-noop/
 export CPU_IMG=noop.tcl
 export NPC_HOME=${WT_HOME}/noop-lo
+export NSCSCC_HOME=${WT_HOME}/nscscc2018
 
 alias vimelf="vim /usr/include/elf.h"
 export PATH="$PATH:/D/IDA_Linux_v6.4"
@@ -95,6 +97,16 @@ IP=192.168.1.17
 alias ssh-cpu="sshpass -p root ssh root@$IP"
 alias serial-cpu="sudo minicom -D /dev/ttyACM0 -c on"
 alias cpu-out="sshpass -p root ssh -t root@$IP 'rm cpu.out && minicom -D /dev/ttyPS1 -c on -C cpu.out'"
+
+function gs() {
+  if [ $# -eq 0 ]; then
+    ssh -X -C gs@192.168.1.100 "cd $PWD; zsh -l"
+  else
+	ssh -X -C gs@192.168.1.100 "cd $PWD; $*"
+  fi
+  return $?
+}
+
 function upload() {
 	sshpass -p root scp $1 root@$IP:~/
 }
