@@ -29,9 +29,15 @@ wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | apt-key add - 
 apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" # clang-5.0
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - # clang-5.0
 add-apt-repository -y ppa:hzwhuang/ss-qt5 # shadowsocks-qt5
+# sbt
+echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
 apt-get update
 
 apt-get install -y liballegro5-dev
+
+# sbt
+apt-get install -y sbt
 
 # verilator
 apt-get install -y verilator
