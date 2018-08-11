@@ -1,4 +1,5 @@
 #!/bin/bash
+set -v on
 
 username=wierton
 
@@ -80,8 +81,10 @@ apt-get install -y virtualbox-5.2
 apt-get install -y clang-5.0
 update-alternatives --install /usr/bin/clang clang /usr/bin/clang-5.0 50
 
-# zsh
+# zsh vim vim-gnome unzip git
 apt-get install -y tmux git zsh vim vim-gnome unzip unrar
+
+# git configure
 sudo -S -u ${username} sh -c '
 git config --global user.name 141242068-ouxianfei
 git config --global user.email 141242068@smail.nju.edu.cn
@@ -89,8 +92,23 @@ git config --global core.editor vim
 git config --global color.ui true
 git config --global push.default simple
 '
+
+# oh-my-zsh
 sudo -S -u ${username} sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-chsh -s $(which zsh) ${username}
+sudo -S -u ${username} chsh -s $(which zsh)
+sed -i "s/ZSH_THEME/# \0/g" ${homedir}/.zshrc
+
+# environment
+echo "source ${homedir}/.wtrc" >> ${homedir}/.zshrc
+echo "source ${homedir}/.wtrc" >> ${homedir}/.bashrc
+
+# oh-my-zsh config
+sudo -S -u ${username} cp wierton.zsh-theme ${homedir}/.oh-my-zsh/themes
+
+# autojump
+apt-get install -y autojump
+echo ". /usr/share/autojump/autojump.zsh" >> ${homedir}/.zshrc
+echo ". /usr/share/autojump/autojump.bash" >> ${homedir}/.bashrc
 
 # numlock
 apt-get install -y numlockx
