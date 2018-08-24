@@ -39,7 +39,7 @@ PATH="$PATH:/opt/gcc-4.3-ls232/bin"
 # Vivado
 PATH="$PATH:/opt/Xilinx/Vivado/2018.1/bin"
 # PATH="$PATH:/opt/Xilinx/Vivado/2017.4/bin"
-XILINX_VIVADO="/opt/Xilinx/Vivado/2017.4/"
+alias vivado17="/opt/Xilinx/Vivado/2017.4/bin/vivado"
 alias vivado-batch="vivado -nolog -nojournal -notrace -mode batch -source"
 
 # virtualenv and virtualenvwrapper
@@ -70,7 +70,7 @@ export MIPS32_NEMU_HOME=${WT_HOME}/nemu-mips32
 # export CPU_PATH=${WT_HOME}/noop.17.bin/
 export CPU_PATH=${WT_HOME}/lgz-noop/
 export CPU_IMG=noop.tcl
-export NPC_HOME=${WT_HOME}/noop-lo
+# export NPC_HOME=${WT_HOME}/noop-lo
 export NSCSCC_HOME=${WT_HOME}/nscscc2018
 
 alias vimelf="vim /usr/include/elf.h"
@@ -111,10 +111,6 @@ function upload() {
 	sshpass -p root scp $1 root@$IP:~/
 }
 
-function to-binary() {
-	hexdump -v -e '1/1 "0x%02x, "' $1 | fmt --width 80
-}
-
 function mips-as() {
 	name=`basename -s .S $1`
 	mips-linux-gnu-as -EL $name.S -o $name.o
@@ -125,10 +121,45 @@ function mips-as() {
 	hexdump -ve '2/ "%08x " "\n"' $name.bin | awk '{print $2$1}' > $name.bin.txt
 }
 
-function hdiff() {
-	vimdiff $1 /home/wierton/navy-apps/libs/libc/include/$1
-}
+function bin2txt() {(
+  l=4
+  while [ -n "$1" ]; do
+	case "$1" in
+	  -h) echo bin2txt -l length filename;
+		  exit 0 ;;
+	  -l) l=$2
+		  shift ;;
+	   *) f=$1
+		 ;;
+	esac
+	shift
+  done
 
-function cdiff() {
-	vimdiff $1 /home/wierton/navy-apps/libs/libc/src/$1
-}
+  if [ -n "$f" ]; then
+	hexdump -ve 1/$l\ \"%0$(( $l*2 ))x\ \" $f | fmt --width 60
+  else
+	echo "no input files"
+  fi
+)}
+
+function bin2coe() {(
+  l=4
+  while [ -n "$1" ]; do
+	case "$1" in
+	  -h) echo bin2coe -l length filename;
+		  exit 0 ;;
+	  -l) l=$2
+		  shift ;;
+	   *) f=$1
+		 ;;
+	esac
+	shift
+  done
+
+  if [ -n "$f" ]; then
+	hexdump -ve 1/$l\ \"%0$(( $l*2 ))x\\n\" $f | sed 1i'memory_initialization_radix = 16;\nmemory_initialization_vector ='
+  else
+	echo "no input files"
+  fi
+)}
+
