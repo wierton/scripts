@@ -82,7 +82,7 @@ export PATH="$PATH:/D/IDA_Linux_v6.4"
 #export ZSH_THEME=aussiegeek
 export ZSH_THEME=wierton
 
-export PATH="$PATH:${WT_HOME}/.local/bin"
+export PATH="$PATH:${WT_HOME}/Downloads/cling_2017-11-03_ubuntu16/bin"
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
 alias jllvm="cd ${WT_HOME}/llvm/llvm/include/llvm"

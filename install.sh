@@ -189,5 +189,12 @@ apt-get install -y docker-compose
 # texmaker IDE in ubuntu
 apt-get install -y texlive-full texlive texstudio
 
+# qemu emulator
+apt-get install -y qemu
+
+# unity desktop
+# apt-get install ubuntu-unity-desktop
+# dpkg-reconfigure lightdm
+
 # autoremove
 apt-get autoremove
