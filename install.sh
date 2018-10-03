@@ -2,18 +2,11 @@
 set -v on
 
 username=wierton
+homedir=/home/${username}
 
-homedir=${homedir}
 cd ${homedir}
 
 # essential: git tmux(tmux.conf) vim(vimrc)
-
-# install tex
-# ===========
-# install synaptic
-# search for `texlive-full` `texlive` and `lyx` and then install all suggested packages
-# texmaker IDE in ubuntu
-
 
 # some backups
 # ============
@@ -188,6 +181,13 @@ apt-get install -y libglib2.0-0:i386
 # docker
 apt-get install -y docker.io
 apt-get install -y docker-compose
+
+# install tex
+# ===========
+# install synaptic
+# search for `texlive-full` `texlive` and `lyx` and then install all suggested packages
+# texmaker IDE in ubuntu
+apt-get install -y texlive-full texlive texstudio
 
 # autoremove
 apt-get autoremove
