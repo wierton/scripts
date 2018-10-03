@@ -47,11 +47,11 @@ apt-get install -y verilator
 apt-get install -y libboost-all-dev
 
 # llvm and clang
-apt-get install -y libllvm-6.0
+apt-get install -y libllvm6.0
 apt-get install -y libclang-6.0
 
-# readline
-apt-get install -y libreadline-dev
+# readline flex bison
+apt-get install -y libreadline-dev flex bison
 
 # debugging tools
 apt-get install -y valgrind

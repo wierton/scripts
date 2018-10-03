@@ -1,6 +1,9 @@
 #!bin/bash
 
+export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton
+export ARCH=mips
+export CROSS_COMPILE=mips-linux-gnu-
 
 function sedr() {
 	sed -i "s/$1/$2/g" `grep -rl "$1"`
@@ -98,14 +101,15 @@ alias ssh-cpu="sshpass -p root ssh root@$IP"
 alias serial-cpu="sudo minicom -D /dev/ttyACM0 -c on"
 alias cpu-out="sshpass -p root ssh -t root@$IP 'rm cpu.out && minicom -D /dev/ttyPS1 -c on -C cpu.out'"
 
-function gs() {
+function gs() {(
+  gsIP=192.168.1.100
   if [ $# -eq 0 ]; then
-    ssh -X -C gs@192.168.1.100 "cd $PWD; zsh -l"
+    ssh -X -C gs@$gsIP "cd $PWD; zsh -l"
   else
-	ssh -X -C gs@192.168.1.100 "cd $PWD; $*"
+	ssh -X -C gs@$gsIP "cd $PWD && $*"
   fi
   return $?
-}
+)}
 
 function upload() {
 	sshpass -p root scp $1 root@$IP:~/
@@ -188,3 +192,51 @@ function bin2coe() {(
   fi
 )}
 
+function to-uImage() {
+  mips-linux-gnu-objcopy -O binary -R .note -R .comment –S $1 $1.bin
+  xz -c $1.bin > $1.bin.xz
+}
+
+function start-kernel() {
+  nemu-mips32 -i ~/u-boot/u-boot.bin -u ~/linux-4.11.4/arch/mips/boot/uImage.bin -S ~/linux-4.11.4/vmlinux $*
+}
+
+function wire-direct() {
+  sudo-guard
+  sudo sh -c 'echo "# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+
+# auto enp5s0
+# iface enp5s0 inet dhcp
+iface enp5s0 inet static
+address 192.168.1.1
+netmask 255.255.255.0
+gateway 192.168.1.1
+broadcast 192.168.1.255" > /etc/network/interfaces'
+  sudo ifconfig enp5s0 192.168.1.1
+  sudo /etc/init.d/networking restart
+  # sudo systemctl restart NetworkManager
+  sudo ifconfig enp5s0 192.168.1.1
+}
+
+function wired() {
+  sudo-guard
+  sudo sh -c 'echo "# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+
+auto enp5s0
+iface enp5s0 inet dhcp
+# iface enp5s0 inet static
+# address 192.168.1.1
+# netmask 255.255.255.0
+# gateway 192.168.1.1
+# broadcast 192.168.1.255" > /etc/network/interfaces'
+  sudo ifconfig enp5s0 down
+  sudo /etc/init.d/networking restart
+  sudo ifconfig enp5s0 up
+  sudo sed -i 's/managed=false/managed=true/g' /etc/NetworkManager/NetworkManager.conf
+  sudo systemctl restart NetworkManager
+  sudo dhclient enp5s0
+}
