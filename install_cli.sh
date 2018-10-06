@@ -1,5 +1,5 @@
 #!/bin/bash
-set -v on
+# set -v on
 
 username=wierton
 homedir=/home/${username}
@@ -151,16 +151,15 @@ install_wtrc() {
   cp ${script_dir}/wtrc ${homedir}/.wtrc
 }
 
-install_tmux_conf() {
+install_tmux_conf_and_plugin() {
   # tmux
   cp ${script_dir}/tmux.conf ${homedir}/.tmux.conf
-  sudo -S -u ${username} sh -c '(mkdir ${homedir}/.tmux &&
+  sudo -S -u ${username} sh -c "(mkdir ${homedir}/.tmux &&
 	cd ${homedir}/.tmux &&
-	git clone https://github.com/tmux-plugins/tmux-resurrect.git)'
+	git clone https://github.com/tmux-plugins/tmux-resurrect.git)"
 }
 
 install_cmake() {
-  # cmake-3.10
   apt-get install -y cmake
 }
 
@@ -183,7 +182,6 @@ install_rust() {
 	for d in ftdetect indent syntax ; do
 	  wget -O ${homedir}/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim;
 	done
-  ;
 }
 
 install_cli_python() {
@@ -248,30 +246,31 @@ install_shadowsocks() {
 
 install() {
   for i in $*; do
-	if install_${i}; then
-	  echo -e "\e[32mINSTALL ${i} SUCCESSFULLY!\e[0m"
+	printf "\e[34mINSTALLING ${i} ...\e[0m"
+	if install_${i} &>> install.log; then
+	  echo -e "\e[32mSUCCESSFULLY!\e[0m"
 	else
-	  echo -e "\e[32mINSTALL ${i} FAILED!\e[0m"
+	  echo -e "\e[31mFAILED!\e[0m"
 	fi
   done | tee -a install.log
 }
 
 install_cli() {
-  use_tsinghua_source()
-  install_extra_cli_source()
+  use_tsinghua_source
+  install_extra_cli_source
 
-  apt-get update && apt-get upgrade
+  # apt-get update && apt-get upgrade
 
   install sbt verilator boost_libraries llvm_library \
 	clang_library readline_library parser_tools useful_tool \
 	gcc_8 gcc_multilib clang_6 develop_essential \
 	git_configure oh_my_zsh autojump numlockx vimrc wtrc \
-	tmux_conf cmake gnu_mips_tool_chain scala rust \
+	tmux_conf_and_plugin cmake gnu_mips_tool_chain scala rust \
 	cli_python qemu
 }
 
 install_gui() {
-  install_extra_gui_source()
+  install_extra_gui_source
   apt-get update && apt-get upgrade
 
   install sdl_library python_libraries python_mysql docker \
@@ -279,8 +278,8 @@ install_gui() {
 	shadowsocks
 }
 
-install_cli()
-install_gui()
+install_cli
+# install_gui
 
 # autoremove
 apt-get autoremove
