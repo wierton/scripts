@@ -251,6 +251,7 @@ install_texlive() {
   apt-get install -y texlive-full texlive texstudio
 }
 
+install_ubuntu_unity_desktop_option=--no-redirect
 install_ubuntu_unity_desktop() {
   apt-get install -y ubuntu-unity-desktop
   dpkg-reconfigure lightdm
