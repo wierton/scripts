@@ -15,6 +15,17 @@ cd ${homedir}
 # ${homedir}/.config/shadowsocks-qt5/*
 # ${homedir}/.ssh/*  (public key and private key)
 
+prepare_dup_stdout() {
+  exec 3<&2
+}
+
+insert_to_file() {
+  # 1: string, 2: file
+  if ! grep -F $1 $2; then
+	echo $1 >> $2
+  fi
+}
+
 use_tsinghua_source() {
   (cd /etc/apt/; cp sources.list sources.list.bak;
   echo '# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
@@ -116,12 +127,12 @@ install_git_configure() {
 install_oh_my_zsh() {
   # oh-my-zsh
   sudo -S -u ${username} sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-  sudo -S -u ${username} chsh -s $(which zsh)
+  sudo -S -u ${username} chsh -s $(which zsh) 
   sed -i "s/ZSH_THEME/# \0/g" ${homedir}/.zshrc
 
   # environment
-  echo "source ${homedir}/.wtrc" >> ${homedir}/.zshrc
-  echo "source ${homedir}/.wtrc" >> ${homedir}/.bashrc
+  insert_to_file "source ${homedir}/.wtrc" ${homedir}/.zshrc
+  insert_to_file "source ${homedir}/.wtrc" ${homedir}/.bashrc
 
   # oh-my-zsh config
   sudo -S -u ${username} cp ${script_dir}/wierton.zsh-theme ${homedir}/.oh-my-zsh/themes
@@ -136,9 +147,7 @@ install_autojump() {
 install_numlockx() {
   # numlock
   apt-get install -y numlockx
-  if ! grep "numlockx on" /etc/profile; then
-	echo "numlockx on" >> /etc/profile
-  fi
+  insert_to_file "numlockx on" >> /etc/profile
 }
 
 install_vimrc() {
@@ -232,7 +241,7 @@ install_texlive() {
 }
 
 install_ubuntu_unity_desktop() {
-  apt-get install ubuntu-unity-desktop
+  apt-get install -y ubuntu-unity-desktop
   dpkg-reconfigure lightdm
 }
 
@@ -256,10 +265,11 @@ install() {
 }
 
 install_cli() {
-  use_tsinghua_source
-  install_extra_cli_source
+  # use_tsinghua_source
+  # install_extra_cli_source
 
   # apt-get update && apt-get upgrade
+  prepare_dup_stdout
 
   install sbt verilator boost_libraries llvm_library \
 	clang_library readline_library parser_tools useful_tool \
@@ -277,6 +287,10 @@ install_gui() {
 	texlive ubuntu_unity_desktop indicator_stickynotes \
 	shadowsocks
 }
+
+prepare_dup_stdout
+install oh_my_zsh
+exit
 
 install_cli
 # install_gui
