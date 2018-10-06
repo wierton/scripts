@@ -1,6 +1,7 @@
 #!bin/bash
 
-export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
+# export QT_SCALE_FACTOR=1.0 
+export QT_AUTO_SCREEN_SCALE_FACTOR=1.38 # for 1980x1680 display
 export WT_HOME=/home/wierton
 export ARCH=mips
 export CROSS_COMPILE=mips-linux-gnu-
