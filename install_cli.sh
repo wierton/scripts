@@ -3,6 +3,7 @@
 
 username=wierton
 homedir=/home/${username}
+passwd=
 script_dir=`pwd`
 
 cd ${homedir}
@@ -17,12 +18,13 @@ cd ${homedir}
 
 prepare_dup_stdout() {
   exec 3<&2
+  # echo Hello World >&3
 }
 
 insert_to_file() {
   # 1: string, 2: file
-  if ! grep -F $1 $2; then
-	echo $1 >> $2
+  if ! grep -F "$1" "$2"; then
+	echo "$1" >> "$2";
   fi
 }
 
@@ -124,10 +126,11 @@ install_git_configure() {
   '
 }
 
+install_oh_my_zsh_option=--no-redirect
 install_oh_my_zsh() {
   # oh-my-zsh
   sudo -S -u ${username} sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-  sudo -S -u ${username} chsh -s $(which zsh) 
+  sudo -S -u ${username} chsh -s $(which zsh)
   sed -i "s/ZSH_THEME/# \0/g" ${homedir}/.zshrc
 
   # environment
@@ -138,16 +141,21 @@ install_oh_my_zsh() {
   sudo -S -u ${username} cp ${script_dir}/wierton.zsh-theme ${homedir}/.oh-my-zsh/themes
 }
 
+post_install_oh_my_zsh() {
+  insert_to_file "unsetopt BG_NICE" ${homedir}/.zshrc
+  insert_to_file "unsetopt BG_NICE" ${homedir}/.bashrc
+}
+
 install_autojump() {
   apt-get install -y autojump
-  echo ". /usr/share/autojump/autojump.zsh" >> ${homedir}/.zshrc
-  echo ". /usr/share/autojump/autojump.bash" >> ${homedir}/.bashrc
+  insert_to_file ". /usr/share/autojump/autojump.zsh" ${homedir}/.zshrc
+  insert_to_file ". /usr/share/autojump/autojump.bash" ${homedir}/.bashrc
 }
 
 install_numlockx() {
   # numlock
   apt-get install -y numlockx
-  insert_to_file "numlockx on" >> /etc/profile
+  insert_to_file "numlockx on" /etc/profile
 }
 
 install_vimrc() {
@@ -253,10 +261,19 @@ install_shadowsocks() {
   apt-get install -y shadowsocks-qt5
 }
 
+run_install_instance() {(
+  eval option=$(echo install_\$${i}_option) 
+  if [ "$option"s == "--no-redirect"s ]; then
+	install_${i} &>> install.log
+  else
+	install_${i} &>> install.log
+  fi
+)}
+
 install() {
   for i in $*; do
 	printf "\e[34mINSTALLING ${i} ...\e[0m"
-	if install_${i} &>> install.log; then
+	if run_install_instance ${i}; then
 	  echo -e "\e[32mSUCCESSFULLY!\e[0m"
 	else
 	  echo -e "\e[31mFAILED!\e[0m"
@@ -265,18 +282,17 @@ install() {
 }
 
 install_cli() {
-  # use_tsinghua_source
-  # install_extra_cli_source
+  use_tsinghua_source
+  install_extra_cli_source
 
-  # apt-get update && apt-get upgrade
-  prepare_dup_stdout
+  apt-get update && apt-get upgrade
 
   install sbt verilator boost_libraries llvm_library \
 	clang_library readline_library parser_tools useful_tool \
 	gcc_8 gcc_multilib clang_6 develop_essential \
-	git_configure oh_my_zsh autojump numlockx vimrc wtrc \
+	numlockx vimrc wtrc cli_python qemu \
 	tmux_conf_and_plugin cmake gnu_mips_tool_chain scala rust \
-	cli_python qemu
+	git_configure oh_my_zsh autojump
 }
 
 install_gui() {
@@ -288,12 +304,10 @@ install_gui() {
 	shadowsocks
 }
 
-prepare_dup_stdout
-install oh_my_zsh
-exit
-
 install_cli
 # install_gui
+
+# post_install_oh_my_zsh
 
 # autoremove
 apt-get autoremove
