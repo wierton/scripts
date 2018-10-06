@@ -54,7 +54,7 @@ install_extra_cli_source() {
 }
 
 install_extra_gui_source() {
-  add-apt-repository -y ppa:umang/indicator-stickynotes
+  add-apt-repository -y ppa:umang/indicator-stickynotes &&
   echo '
   deb http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial main
   deb-src http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial main
@@ -82,8 +82,7 @@ install_clang_library() {
 }
 
 install_readline_library() {
-  apt-get install -y libreadline-dev
-  apt-get install -y lib32readline-dev
+  apt-get install -y libreadline-dev lib32readline-dev
 }
 
 install_parser_tools() {
@@ -91,8 +90,7 @@ install_parser_tools() {
 }
 
 install_useful_tool() {
-  apt-get install -y valgrind curl httpie
-  apt-get install -y cppman
+  apt-get install -y valgrind curl httpie cppman
 }
 
 install_gcc_8() {
@@ -102,8 +100,7 @@ install_gcc_8() {
 }
 
 install_gcc_multilib() {
-  apt-get install -y gcc-8-multilib
-  apt-get install -y g++-8-multilib
+  apt-get install -y gcc-8-multilib g++-8-multilib
 }
 
 install_clang_6() {
@@ -130,7 +127,9 @@ install_oh_my_zsh_option=--no-redirect
 install_oh_my_zsh() {
   # oh-my-zsh
   sudo -S -u ${username} sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-  sudo -S -u ${username} chsh -s $(which zsh)
+  if ! sudo -S -u ${username} chsh -s $(which zsh); then
+	exit -1;
+  fi
   sed -i "s/ZSH_THEME/# \0/g" ${homedir}/.zshrc
 
   # environment
@@ -196,7 +195,9 @@ install_scala() {
 }
 
 install_rust() {
-  curl -sSf https://static.rust-lang.org/rustup.sh | sh
+  if ! curl -sSf https://static.rust-lang.org/rustup.sh | sh; then
+	exit -1;
+  fi
   mkdir -p ${homedir}/.vim/{ftdetect,indent,syntax} &&
 	for d in ftdetect indent syntax ; do
 	  wget -O ${homedir}/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim;
@@ -264,7 +265,7 @@ install_shadowsocks() {
 }
 
 run_install_instance() {(
-  eval option=$(echo install_\$${i}_option) 
+  eval option=$(echo \${install_${i}_option})
   if [ "$option"s == "--no-redirect"s ]; then
 	install_${i}
   else
@@ -289,12 +290,12 @@ install_cli() {
 
   apt-get update && apt-get upgrade
 
-  install sbt verilator boost_libraries llvm_library \
+  install verilator boost_libraries llvm_library \
 	clang_library readline_library parser_tools useful_tool \
 	gcc_8 gcc_multilib clang_6 develop_essential \
 	numlockx vimrc wtrc cli_python qemu \
 	tmux_conf_and_plugin cmake gnu_mips_tool_chain \
-	git_configure oh_my_zsh autojump scala rust
+	git_configure oh_my_zsh autojump scala rust sbt
 }
 
 install_gui() {
