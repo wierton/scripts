@@ -3,6 +3,7 @@ set -v on
 
 username=wierton
 homedir=/home/${username}
+script_dir=`pwd`
 
 cd ${homedir}
 
@@ -116,10 +117,13 @@ fi
 apt-get install -y cppman
 
 # vimrc
-cp ./vimrc  ${homedir}/.vimrc
+cp ${script_dir}/vimrc  ${homedir}/.vimrc
+
+# wtrc
+cp ${script_dir}/wtrc ${homedir}/.wtrc
 
 # tmux
-cp ./tmux.conf ${homedir}/.tmux.conf
+cp ${script_dir}/tmux.conf ${homedir}/.tmux.conf
 sudo -S -u ${username} sh -c '(mkdir ${homedir}/.tmux &&
 	cd ${homedir}/.tmux &&
 	git clone https://github.com/tmux-plugins/tmux-resurrect.git)'
