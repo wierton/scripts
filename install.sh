@@ -126,7 +126,7 @@ install_git_configure() {
 install_oh_my_zsh_option=--no-redirect
 install_oh_my_zsh() {
   # oh-my-zsh
-  sudo -S -u ${username} sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+  sudo -S -u ${username} sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - 2>/dev/null)"
   if ! sudo -S -u ${username} chsh -s $(which zsh); then
 	exit -1;
   fi
