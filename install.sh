@@ -222,7 +222,8 @@ install_sdl_library() {
   apt-get install -y libgtk2.0-dev
   apt-get install -y libgtk-3-dev
 
-  apt-get install -y libsdl-1.2debian:i386
+  apt-get install -y libsdl1.2-dev:i386
+  apt-get install -y libsdl2-dev:i386
 }
 
 install_python_libraries() {
