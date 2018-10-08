@@ -265,6 +265,10 @@ install_shadowsocks() {
   apt-get install -y shadowsocks-qt5
 }
 
+install_media_codecs() {
+  apt-get install -y ubuntu-restricted-extras
+}
+
 run_install_instance() {(
   eval option=$(echo \${install_${i}_option})
   if [ "$option"s == "--no-redirect"s ]; then
@@ -305,7 +309,7 @@ install_gui() {
 
   install sdl_library python_libraries python_mysql docker \
 	texlive ubuntu_unity_desktop indicator_stickynotes \
-	shadowsocks
+	shadowsocks media_codecs
 }
 
 install_cli
