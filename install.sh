@@ -1,7 +1,7 @@
 #!/bin/bash
 # set -v on
 
-username=wierton
+username=ics2018
 homedir=/home/${username}
 passwd=
 script_dir=`pwd`
@@ -312,8 +312,17 @@ install_gui() {
 	shadowsocks media_codecs
 }
 
+install_ics() {
+  username=ics$(date +%Y)
+  homedir=/home/$username
+  
+  install vimrc wtrc qemu tmux_conf_and_plugin \
+	git_configure oh_my_zsh autojump
+}
+
 install_cli
 # install_gui
+# install_ics
 
 # post_install_oh_my_zsh
 
