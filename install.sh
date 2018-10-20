@@ -266,6 +266,19 @@ install_shadowsocks() {
   apt-get install -y shadowsocks-qt5
 }
 
+install_proxychains4() {
+  apt-get install -y proxychains4
+  sed -i 's/socks4  127.0.0.1 9050/socks5  127.0.0.1 1080/g' /etc/proxychains4.conf
+  # sudo proxychains4 wget www.google.com
+}
+
+install_libpaxos() {(
+  apt-get install -y libevent-dev libmsgpack-dev
+  git clone https://github.com/JiYou/cpaxos &&
+	cd cpaxos && mkdir output && cd output && cmake .. &&
+	make
+)}
+
 install_media_codecs() {
   apt-get install -y ubuntu-restricted-extras
 }
@@ -310,7 +323,7 @@ install_gui() {
 
   install sdl_library python_libraries python_mysql docker \
 	texlive ubuntu_unity_desktop indicator_stickynotes \
-	shadowsocks media_codecs
+	shadowsocks proxychains4 media_codecs
 }
 
 install_ics() {
