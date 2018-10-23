@@ -1,10 +1,10 @@
 #!/bin/bash
 # set -v on
 
-username=ics2018
+username=wierton
 homedir=/home/${username}
-passwd=
-script_dir=`pwd`
+passwd=123456
+script_dir=$(cd `dirname $0` && pwd)
 
 cd ${homedir}
 
@@ -15,6 +15,13 @@ cd ${homedir}
 # ${homedir}/.config/indicator-stickynotes
 # ${homedir}/.config/shadowsocks-qt5/*
 # ${homedir}/.ssh/*  (public key and private key)
+
+check_basic_config() {
+  read -e -p "Enter your name: " -i ${username} username
+  read -e -s -p "Enter your password: " passwd  && echo
+  read -e -p "Enter your home directory: " -i ${homedir} homedir
+  read -e -p "Check the script directory: " -i ${script_dir} script_dir
+}
 
 prepare_dup_stdout() {
   exec 3<&2
@@ -272,6 +279,25 @@ install_proxychains4() {
   # sudo proxychains4 wget www.google.com
 }
 
+install_sogou_input_method() {(
+  deb='sogoupinyin_2.2.0.0108_amd64.deb'
+  wget 'http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb?st=75v1t9lv53p0PiYsQgDKTQ&e=1540289819&fn=sogoupinyin_2.2.0.0108_amd64.deb' -O $deb
+  dpkg -i $deb
+  sogou-diag
+)}
+
+install_netease_cloud_music() {(
+  deb='netease-cloud-music_1.1.0_amd64_ubuntu.deb'
+  wget 'http://202.119.32.195/cache/10/01/d1.music.126.net/6c825290adfb69e71558de8c37c44b13/netease-cloud-music_1.1.0_amd64_ubuntu.deb' -O $deb
+  dpkg -i $deb
+)}
+
+install_google_chrome_stable() {(
+  deb='google-chrome-stable_current_amd64.deb'
+  wget 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' -O $deb
+  dpkg -i $deb
+)}
+
 install_libpaxos() {(
   apt-get install -y libevent-dev libmsgpack-dev
   git clone https://github.com/JiYou/cpaxos &&
@@ -307,7 +333,7 @@ install_cli() {
   use_tsinghua_source
   install_extra_cli_source
 
-  apt-get update && apt-get upgrade
+  apt-get upgrade
 
   install verilator boost_libraries llvm_library \
 	clang_library readline_library parser_tools useful_tool \
@@ -319,11 +345,12 @@ install_cli() {
 
 install_gui() {
   install_extra_gui_source
-  apt-get update && apt-get upgrade
+  apt-get upgrade
 
   install sdl_library python_libraries python_mysql docker \
 	texlive ubuntu_unity_desktop indicator_stickynotes \
-	shadowsocks proxychains4 media_codecs
+	shadowsocks proxychains4 media_codecs \
+	sogou_input_method netease_cloud_music google_chrome_stable
 }
 
 install_ics() {
@@ -334,11 +361,12 @@ install_ics() {
 	git_configure oh_my_zsh autojump
 }
 
-install_cli
+check_basic_config
+# install_cli
 # install_gui
 # install_ics
 
 # post_install_oh_my_zsh
 
 # autoremove
-apt-get autoremove
+# apt-get autoremove
