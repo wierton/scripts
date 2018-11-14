@@ -241,6 +241,10 @@ iface enp5s0 inet dhcp
   sudo dhclient enp5s0
 }
 
+alias genymotion=/opt/genymobile/genymotion/genymotion
+alias genymotion-shell=/opt/genymobile/genymotion/genymotion-shell
+alias gmtool=/opt/genymobile/genymotion/genymotion/gmtool
+
 # apt-get install -y cpufrequtils
 # cpufreq-info, restart will override it to default mode
 alias powersave='sudo-guard && sudo cpufreq-set -g powersave'
