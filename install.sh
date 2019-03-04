@@ -1,19 +1,14 @@
 #!/bin/bash
-set -v on
+# set -v on
 
 username=wierton
+homedir=/home/${username}
+passwd=123456
+script_dir=$(cd `dirname $0` && pwd)
 
-homedir=${homedir}
 cd ${homedir}
 
 # essential: git tmux(tmux.conf) vim(vimrc)
-
-# install tex
-# ===========
-# install synaptic
-# search for `texlive-full` `texlive` and `lyx` and then install all suggested packages
-# texmaker IDE in ubuntu
-
 
 # some backups
 # ============
@@ -21,170 +16,357 @@ cd ${homedir}
 # ${homedir}/.config/shadowsocks-qt5/*
 # ${homedir}/.ssh/*  (public key and private key)
 
+check_basic_config() {
+  read -e -p "Enter your name: " -i ${username} username
+  read -e -s -p "Enter your password: " passwd  && echo
+  read -e -p "Enter your home directory: " -i ${homedir} homedir
+  read -e -p "Check the script directory: " -i ${script_dir} script_dir
+}
 
-# add-apt-repository
-add-apt-repository -y ppa:umang/indicator-stickynotes
-add-apt-repository -y ppa:ubuntu-toolchain-r/test # gcc-7
-wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | apt-key add - # virtualbox
-wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | apt-key add - # virtualbox
-apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main" # clang-5.0
-wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - # clang-5.0
-add-apt-repository -y ppa:hzwhuang/ss-qt5 # shadowsocks-qt5
-# sbt
-echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
-apt-get update
+prepare_dup_stdout() {
+  exec 3<&2
+  # echo Hello World >&3
+}
 
-apt-get install -y liballegro5-dev
+insert_to_file() {
+  # 1: string, 2: file
+  if ! grep -F "$1" "$2"; then
+	echo "$1" >> "$2";
+  fi
+}
 
-# sbt
-apt-get install -y sbt
+use_tsinghua_source() {
+  (cd /etc/apt/; cp sources.list sources.list.bak;
+  echo '# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+  deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+  # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+  deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+  # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+  deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+  # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+  deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+  # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
 
-# verilator
-apt-get install -y verilator
+  # 预发布软件源，不建议启用
+  # deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+  # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+  ' > sources.list
+  )
+}
 
-# boost
-apt-get install -y libboost-all-dev
+install_extra_cli_source() {
+  # sbt
+  echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+}
 
-# llvm and clang
-apt-get install -y libllvm-6.0
-apt-get install -y libclang-6.0
+install_extra_gui_source() {
+  add-apt-repository -y ppa:umang/indicator-stickynotes &&
+  echo '
+  deb http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial main
+  deb-src http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial main
+  ' >> /etc/apt/sources.list # shadowsocks-qt5
+}
 
-# readline
-apt-get install -y libreadline-dev
+install_sbt() {
+  apt-get install -y sbt
+}
 
-# debugging tools
-apt-get install -y valgrind
+install_verilator() {
+  apt-get install -y verilator
+}
 
-# curl and httpie
-apt-get install -y curl httpie
+install_boost_libraries() {
+  apt-get install -y libboost-all-dev
+}
 
-# indicator-stickynotes
-apt-get install -y indicator-stickynotes
+install_llvm_library() {
+  apt-get install -y libllvm6.0
+}
 
-# gcc-7
-apt-get install -y gcc-7 g++-7
-update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 50
-update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 50
+install_clang_library() {
+  apt-get install -y libclang-6.0
+}
 
-# multilib
-apt-get install -y gcc-7-multilib
-apt-get install -y g++-7-multilib
+install_readline_library() {
+  apt-get install -y libreadline-dev lib32readline-dev
+}
 
-# shadowsocks
-apt-get install -y shadowsocks-qt5 
+install_parser_tools() {
+ apt-get install -y flex bison
+}
 
-# virtualbox
-apt-get install -y virtualbox-5.2
+install_useful_tool() {
+  apt-get install -y valgrind curl httpie cppman
+}
 
-# clang-5.0
-apt-get install -y clang-5.0
-update-alternatives --install /usr/bin/clang clang /usr/bin/clang-5.0 50
+install_gcc_8() {
+  apt-get install -y gcc-8 g++-8
+  update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 50
+  update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 50
+}
 
-# zsh vim vim-gnome unzip git
-apt-get install -y tmux git zsh vim vim-gnome unzip unrar
+install_gcc_multilib() {
+  apt-get install -y gcc-8-multilib g++-8-multilib
+}
 
-# git configure
-sudo -S -u ${username} sh -c '
-git config --global user.name 141242068-ouxianfei
-git config --global user.email 141242068@smail.nju.edu.cn
-git config --global core.editor vim
-git config --global color.ui true
-git config --global push.default simple
-'
+install_clang_6() {
+  apt-get install -y clang-6.0
+  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 50
+}
 
-# oh-my-zsh
-sudo -S -u ${username} sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-sudo -S -u ${username} chsh -s $(which zsh)
-sed -i "s/ZSH_THEME/# \0/g" ${homedir}/.zshrc
+install_develop_essential() {
+  apt-get install -y tmux git zsh vim unzip unrar
+  apt-get install -y vim-gnome
+}
 
-# environment
-echo "source ${homedir}/.wtrc" >> ${homedir}/.zshrc
-echo "source ${homedir}/.wtrc" >> ${homedir}/.bashrc
+install_git_configure() {
+  sudo -S -u ${username} sh -c '
+  git config --global user.name 141242068-ouxianfei
+  git config --global user.email 141242068@smail.nju.edu.cn
+  git config --global core.editor vim
+  git config --global color.ui true
+  git config --global push.default simple
+  '
+}
 
-# oh-my-zsh config
-sudo -S -u ${username} cp wierton.zsh-theme ${homedir}/.oh-my-zsh/themes
+install_oh_my_zsh_option=--no-redirect
+install_oh_my_zsh() {
+  # oh-my-zsh
+  sudo -S -u ${username} sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - 2>/dev/null)"
+  if ! sudo -S -u ${username} chsh -s $(which zsh); then
+	exit -1;
+  fi
+  sed -i "s/ZSH_THEME/# \0/g" ${homedir}/.zshrc
 
-# autojump
-apt-get install -y autojump
-echo ". /usr/share/autojump/autojump.zsh" >> ${homedir}/.zshrc
-echo ". /usr/share/autojump/autojump.bash" >> ${homedir}/.bashrc
+  # environment
+  insert_to_file "source ${homedir}/.wtrc" ${homedir}/.zshrc
+  insert_to_file "source ${homedir}/.wtrc" ${homedir}/.bashrc
 
-# numlock
-apt-get install -y numlockx
-if ! grep "numlockx on" /etc/profile; then
-	echo "numlockx on" >> /etc/profile
-fi
+  # oh-my-zsh config
+  sudo -S -u ${username} cp ${script_dir}/wierton.zsh-theme ${homedir}/.oh-my-zsh/themes
+}
 
-# cppman
-apt-get install -y cppman
+post_install_oh_my_zsh() {
+  insert_to_file "unsetopt BG_NICE" ${homedir}/.zshrc
+  insert_to_file "unsetopt BG_NICE" ${homedir}/.bashrc
+}
 
-# vimrc
-cp ./vimrc  ${homedir}/.vimrc
+install_autojump() {
+  apt-get install -y autojump
+  insert_to_file ". /usr/share/autojump/autojump.zsh" ${homedir}/.zshrc
+  insert_to_file ". /usr/share/autojump/autojump.bash" ${homedir}/.bashrc
+}
 
-# tmux
-cp ./tmux.conf ${homedir}/.tmux.conf
-sudo -S -u ${username} sh -c '(mkdir ${homedir}/.tmux &&
-	cd ${homedir}/.tmux &&
-	git clone https://github.com/tmux-plugins/tmux-resurrect.git)'
+install_numlockx() {
+  # numlock
+  apt-get install -y numlockx
+  insert_to_file "numlockx on" /etc/profile
+}
 
+install_vimrc() {
+  # vimrc
+  cp ${script_dir}/vimrc  ${homedir}/.vimrc
+}
 
-# libsdl
-apt-get install -y libsdl1.2-dev libsdl2-dev
-apt-get install -y libgtk2.0-dev
-apt-get install -y libgtk-3-dev
+install_wtrc() {
+  # wtrc
+  cp ${script_dir}/wtrc ${homedir}/.wtrc
+}
 
-apt-get install -y lib32readline-dev
-apt-get install -y libsdl-1.2debian:i386
+install_tmux_conf_and_plugin() {
+  # tmux
+  cp ${script_dir}/tmux.conf ${homedir}/.tmux.conf
+  if [ ! -d ${homedir}/.tmux/tmux-resurrect ]; then
+	sudo -S -u ${username} sh -c "(mkdir -p ${homedir}/.tmux &&
+	  cd ${homedir}/.tmux &&
+	  git clone https://github.com/tmux-plugins/tmux-resurrect.git)"
+  fi
+}
 
-# cmake-3.10
-(version=3.10
-build=2
-wget https://cmake.org/files/v$version/cmake-$version.$build.tar.gz
-tar -xzvf cmake-$version.$build.tar.gz
-cd cmake-$version.$build/
-./bootstrap
-make -j4
-sudo make install
-)
+install_cmake() {
+  apt-get install -y cmake
+}
 
-# cross chain
-apt-get install -y binutils-mips-linux-gnu
-apt-get install -y cpp-mips-linux-gnu
-apt-get install -y g++-mips-linux-gnu
-apt-get install -y gcc-mips-linux-gnu
-# apt-get install -y gcc-mips-linux-gnu-base
+install_gnu_mips_tool_chain() {
+  # cross chain
+  apt-get install -y binutils-mips-linux-gnu
+  apt-get install -y cpp-mips-linux-gnu
+  apt-get install -y g++-mips-linux-gnu
+  apt-get install -y gcc-mips-linux-gnu
+  # apt-get install -y gcc-mips-linux-gnu-base
+}
 
-# scala rust
-apt-get install -y scala
-curl -sSf https://static.rust-lang.org/rustup.sh | sh
-mkdir -p ${homedir}/.vim/{ftdetect,indent,syntax} &&
+install_scala() {
+  apt-get install -y scala
+}
+
+install_rust() {
+  if ! curl -sSf https://static.rust-lang.org/rustup.sh | sh; then
+	exit -1;
+  fi
+  mkdir -p ${homedir}/.vim/{ftdetect,indent,syntax} &&
 	for d in ftdetect indent syntax ; do
-		wget -O ${homedir}/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim;
+	  wget -O ${homedir}/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim;
 	done
+}
 
-# python libraries
-apt-get install -y python-pip python3-pip python-virtualenv
-update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 10
-update-alternatives --install /usr/bin/pip pip /usr/bin/pip2 20
-pip2 install yd
-pip2 install numpy && pip3 install numpy
-pip2 install scipy && pip3 install scipy
-pip2 install tensorflow && pip3 install tensorflow
+install_cli_python() {
+  # python libraries
+  apt-get install -y python-pip python3-pip python-virtualenv
+  update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 10
+  update-alternatives --install /usr/bin/pip pip /usr/bin/pip2 20
+  pip2 install yd
+}
 
-# python-sql
-apt-get -y install mysql-server
-apt-get -y install python-dev 
-apt-get -y install python-mysqldb
+install_qemu() {
+  # qemu emulator
+  apt-get install -y qemu
+}
 
-# for idaq
-apt-get install -y libfontconfig1:i386
-apt-get install -y libxrender1:i386
-apt-get install -y libglib2.0-0:i386
+install_sdl_library() {
+  apt-get install -y libsdl1.2-dev libsdl2-dev
+  apt-get install -y libgtk2.0-dev
+  apt-get install -y libgtk-3-dev
 
-# docker
-apt-get install -y docker.io
-apt-get install -y docker-compose
+  apt-get install -y libsdl1.2-dev:i386
+  apt-get install -y libsdl2-dev:i386
+}
+
+install_python_libraries() {
+  pip2 install numpy && pip3 install numpy
+  pip2 install scipy && pip3 install scipy
+  pip2 install tensorflow && pip3 install tensorflow
+}
+
+install_python_mysql() {
+  apt-get -y install mysql-server
+  apt-get -y install python-dev
+  apt-get -y install python-mysqldb
+}
+
+install_docker() {
+  apt-get install -y docker.io
+  apt-get install -y docker-compose
+}
+
+install_texlive() {
+  # install tex
+  # ===========
+  # install synaptic
+  # search for `texlive-full` `texlive` and `lyx` and then install all suggested packages
+  # texmaker IDE in ubuntu
+  apt-get install -y texlive-full texlive texstudio
+}
+
+install_ubuntu_unity_desktop_option=--no-redirect
+install_ubuntu_unity_desktop() {
+  apt-get install -y ubuntu-unity-desktop
+  dpkg-reconfigure lightdm
+}
+
+install_indicator_stickynotes() {
+  apt-get install -y indicator-stickynotes
+}
+
+install_shadowsocks() {
+  apt-get install -y shadowsocks-qt5
+}
+
+install_proxychains4() {
+  apt-get install -y proxychains4
+  sed -i 's/socks4  127.0.0.1 9050/socks5  127.0.0.1 1080/g' /etc/proxychains4.conf
+  # sudo proxychains4 wget www.google.com
+}
+
+install_sogou_input_method() {(
+  deb='sogoupinyin_2.2.0.0108_amd64.deb'
+  wget 'http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb?st=75v1t9lv53p0PiYsQgDKTQ&e=1540289819&fn=sogoupinyin_2.2.0.0108_amd64.deb' -O $deb
+  dpkg -i $deb
+  sogou-diag
+)}
+
+install_netease_cloud_music() {(
+  deb='netease-cloud-music_1.1.0_amd64_ubuntu.deb'
+  wget 'http://202.119.32.195/cache/10/01/d1.music.126.net/6c825290adfb69e71558de8c37c44b13/netease-cloud-music_1.1.0_amd64_ubuntu.deb' -O $deb
+  dpkg -i $deb
+)}
+
+install_google_chrome_stable() {(
+  deb='google-chrome-stable_current_amd64.deb'
+  wget 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' -O $deb
+  dpkg -i $deb
+)}
+
+install_libpaxos() {(
+  apt-get install -y libevent-dev libmsgpack-dev
+  git clone https://github.com/JiYou/cpaxos &&
+	cd cpaxos && mkdir output && cd output && cmake .. &&
+	make
+)}
+
+install_media_codecs() {
+  apt-get install -y ubuntu-restricted-extras
+}
+
+run_install_instance() {(
+  eval option=$(echo \${install_${i}_option})
+  if [ "$option"s == "--no-redirect"s ]; then
+	install_${i}
+  else
+	install_${i} &>> install.log
+  fi
+)}
+
+install() {
+  for i in $*; do
+	printf "\e[34mINSTALLING ${i} ...\e[0m"
+	if run_install_instance ${i}; then
+	  echo -e "\e[32mSUCCESSFULLY!\e[0m"
+	else
+	  echo -e "\e[31mFAILED!\e[0m"
+	fi
+  done | tee -a install.log
+}
+
+install_cli() {
+  use_tsinghua_source
+  install_extra_cli_source
+
+  apt-get upgrade
+
+  install verilator boost_libraries llvm_library \
+	clang_library readline_library parser_tools useful_tool \
+	gcc_8 gcc_multilib clang_6 develop_essential \
+	numlockx vimrc wtrc cli_python qemu \
+	tmux_conf_and_plugin cmake gnu_mips_tool_chain \
+	git_configure oh_my_zsh autojump scala rust sbt
+}
+
+install_gui() {
+  install_extra_gui_source
+  apt-get upgrade
+
+  install sdl_library python_libraries python_mysql docker \
+	texlive ubuntu_unity_desktop indicator_stickynotes \
+	shadowsocks proxychains4 media_codecs \
+	sogou_input_method netease_cloud_music google_chrome_stable
+}
+
+install_ics() {
+  username=ics$(date +%Y)
+  homedir=/home/$username
+  
+  install vimrc wtrc qemu tmux_conf_and_plugin \
+	git_configure oh_my_zsh autojump
+}
+
+check_basic_config
+# install_cli
+# install_gui
+# install_ics
+
+# post_install_oh_my_zsh
 
 # autoremove
-apt-get autoremove
+# apt-get autoremove
