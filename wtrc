@@ -1,6 +1,17 @@
 #!bin/bash
 
+export SIP=114.212.83.188
+
+export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton
+export ARCH=mips
+export CROSS_COMPILE=mips-linux-gnu-
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0
+
+# cuda
+export PATH="$PATH:/usr/local/cuda-9.0/bin"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64/"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64"
 
 function sedr() {
 	sed -i "s/$1/$2/g" `grep -rl "$1"`
@@ -23,15 +34,15 @@ function wgc() {
 }
 
 
-#java
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/bin
-PATH="$PATH:$JAVA_HOME"
+# java
+# export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/bin
+# PATH="$PATH:$JAVA_HOME"
 
-#android SDK
-export ANDROID_HOME=/D/java/android-sdk-linux
-PATH="$PATH:/D/java/android-sdk-linux"
-PATH="$PATH:/D/java/android-sdk-linux/tools"
-PATH="$PATH:/D/java/android-sdk-linux/platform-tools"
+# android SDK
+# export ANDROID_HOME=/D/java/android-sdk-linux
+# PATH="$PATH:/D/java/android-sdk-linux"
+# PATH="$PATH:/D/java/android-sdk-linux/tools"
+# PATH="$PATH:/D/java/android-sdk-linux/platform-tools"
 
 # loongson gcc
 PATH="$PATH:/opt/gcc-4.3-ls232/bin"
@@ -61,17 +72,31 @@ alias mreadelf=mips-linux-gnu-readelf
 alias mas=mips-linux-gnu-as
 alias mar=mips-linux-gnu-ar
 
+alias rld=riscv32-unknown-elf-ld
+alias rgcc=riscv32-unknown-elf-gcc
+alias rg++=riscv32-unknown-elf-g++
+alias rstrip=riscv32-unknown-elf-strip
+alias robjdump=riscv32-unknown-elf-objdump
+alias robjcopy=riscv32-unknown-elf-objcopy
+alias rreadelf=riscv32-unknown-elf-readelf
+alias ras=riscv32-unknown-elf-as
+alias rar=riscv32-unknown-elf-ar
+
 alias nemu-mips32=${WT_HOME}/nemu-mips32/build/nemu
+alias nemu-riscv32=${WT_HOME}/nemu-riscv32/build/nemu
 
 export NOOP_HOME=${WT_HOME}/noop
 export AM_HOME=${WT_HOME}/nexus-am
 export NAVY_HOME=${WT_HOME}/navy-apps
 export MIPS32_NEMU_HOME=${WT_HOME}/nemu-mips32
+export RISCV32_NEMU_HOME=${WT_HOME}/nemu-riscv32
 # export CPU_PATH=${WT_HOME}/noop.17.bin/
 export CPU_PATH=${WT_HOME}/lgz-noop/
 export CPU_IMG=noop.tcl
 # export NPC_HOME=${WT_HOME}/noop-lo
 export NSCSCC_HOME=${WT_HOME}/nscscc2018
+# export RISCV_DIR=${WT_HOME}/riscv-gnu-toolchain
+PATH="$PATH:/opt/riscv/bin"
 
 alias vimelf="vim /usr/include/elf.h"
 export PATH="$PATH:/D/IDA_Linux_v6.4"
@@ -79,7 +104,7 @@ export PATH="$PATH:/D/IDA_Linux_v6.4"
 #export ZSH_THEME=aussiegeek
 export ZSH_THEME=wierton
 
-export PATH="$PATH:${WT_HOME}/.local/bin"
+export PATH="$PATH:${WT_HOME}/Downloads/cling_2017-11-03_ubuntu16/bin"
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
 alias jllvm="cd ${WT_HOME}/llvm/llvm/include/llvm"
@@ -98,14 +123,15 @@ alias ssh-cpu="sshpass -p root ssh root@$IP"
 alias serial-cpu="sudo minicom -D /dev/ttyACM0 -c on"
 alias cpu-out="sshpass -p root ssh -t root@$IP 'rm cpu.out && minicom -D /dev/ttyPS1 -c on -C cpu.out'"
 
-function gs() {
+function gs() {(
+  gsIP=192.168.1.100
   if [ $# -eq 0 ]; then
-    ssh -X -C gs@192.168.1.100 "cd $PWD; zsh -l"
+    ssh -X -C gs@$gsIP "cd $PWD; zsh -l"
   else
-	ssh -X -C gs@192.168.1.100 "cd $PWD; $*"
+	ssh -X -C gs@$gsIP "cd $PWD && $*"
   fi
   return $?
-}
+)}
 
 function upload() {
 	sshpass -p root scp $1 root@$IP:~/
@@ -188,3 +214,61 @@ function bin2coe() {(
   fi
 )}
 
+function to-uImage() {
+  mips-linux-gnu-objcopy -O binary -R .note -R .comment –S $1 $1.bin
+  xz -c $1.bin > $1.bin.xz
+}
+
+function start-kernel() {
+  nemu-mips32 -i ~/u-boot/u-boot.bin -u ~/linux-4.11.4/arch/mips/boot/uImage.bin -S ~/linux-4.11.4/vmlinux $*
+}
+
+function wire-direct() {
+  sudo-guard
+  sudo sh -c 'echo "# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+
+# auto enp5s0
+# iface enp5s0 inet dhcp
+iface enp5s0 inet static
+address 192.168.1.1
+netmask 255.255.255.0
+gateway 192.168.1.1
+broadcast 192.168.1.255" > /etc/network/interfaces'
+  sudo ifconfig enp5s0 192.168.1.1
+  sudo /etc/init.d/networking restart
+  # sudo systemctl restart NetworkManager
+  sudo ifconfig enp5s0 192.168.1.1
+}
+
+function wired() {
+  sudo-guard
+  sudo sh -c 'echo "# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+
+auto enp5s0
+iface enp5s0 inet dhcp
+# iface enp5s0 inet static
+# address 192.168.1.1
+# netmask 255.255.255.0
+# gateway 192.168.1.1
+# broadcast 192.168.1.255" > /etc/network/interfaces'
+  sudo ifconfig enp5s0 down
+  sudo /etc/init.d/networking restart
+  sudo ifconfig enp5s0 up
+  sudo sed -i 's/managed=false/managed=true/g' /etc/NetworkManager/NetworkManager.conf
+  sudo systemctl restart NetworkManager
+  sudo dhclient enp5s0
+}
+
+# apt-get install -y cpufrequtils
+# cpufreq-info, restart will override it to default mode
+alias powersave='sudo-guard && sudo cpufreq-set -g powersave'
+alias userspace='sudo-guard && sudo cpufreq-set -g userspace'
+alias performance='sudo-guard && sudo cpufreq-set -g performance'
+
+# genymotion
+alias genymotion='banio ${WT_HOME}/genymotion/genymotion'
+alias cls='clear && echo -en "\e[3J"'
