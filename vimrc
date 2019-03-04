@@ -30,7 +30,7 @@ inoremap <F5> <Esc>:call CompileRun() <CR>
 nnoremap <F5> <Esc>:call CompileRun() <CR>
 nnoremap <C-l> :exec "!yd ".substitute(expand("<cword>"), "\n", " ", "g") <CR>
 vnoremap <C-l> y:exec "!yd ".substitute(getreg("0"), "\n", " ", "g") <CR>
-nnoremap <C-k> <Esc>gg!Gclang-format<CR>gg=G:%s/\(if\\|while\\|for\) (/\1(/g<CR>
+nnoremap <C-k> <Esc>:%!clang-format -style="{ ColumnLimit: 60 }" <CR><C-o>
 
 noremap + <C-w>+
 noremap - <C-w>-
