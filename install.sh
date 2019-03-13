@@ -1,8 +1,8 @@
 #!/bin/bash
 # set -v on
 
-username=wierton
-homedir=/home/${username}
+username=$(logname)
+homedir=$(eval echo "~$username")
 passwd=123456
 script_dir=$(cd `dirname $0` && pwd)
 
@@ -353,18 +353,15 @@ install_gui() {
 	sogou_input_method netease_cloud_music google_chrome_stable
 }
 
-install_ics() {
-  username=ics$(date +%Y)
-  homedir=/home/$username
-  
-  install vimrc wtrc qemu tmux_conf_and_plugin \
+quick_env() {
+  install vimrc wtrc tmux_conf_and_plugin \
 	git_configure oh_my_zsh autojump
 }
 
 check_basic_config
 # install_cli
 # install_gui
-# install_ics
+quick_env
 
 # post_install_oh_my_zsh
 
