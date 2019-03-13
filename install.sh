@@ -137,7 +137,7 @@ install_oh_my_zsh() {
   if ! sudo -S -u ${username} chsh -s $(which zsh); then
 	exit -1;
   fi
-  sed -i "s/ZSH_THEME/# \0/g" ${homedir}/.zshrc
+  sed -i 's/ZSH_THEME=".*"/ZSH_THEME="wierton"/g' ${homedir}/.zshrc
 
   # environment
   insert_to_file "source ${homedir}/.wtrc" ${homedir}/.zshrc
@@ -156,6 +156,10 @@ install_autojump() {
   apt-get install -y autojump
   insert_to_file ". /usr/share/autojump/autojump.zsh" ${homedir}/.zshrc
   insert_to_file ". /usr/share/autojump/autojump.bash" ${homedir}/.bashrc
+}
+
+install_clangformat() {
+  cp ${script_dir}/clang-format ${homedir}/.clang-format
 }
 
 install_numlockx() {
@@ -355,7 +359,7 @@ install_gui() {
 
 quick_env() {
   install vimrc wtrc tmux_conf_and_plugin \
-	git_configure oh_my_zsh autojump
+	git_configure oh_my_zsh autojump clangformat
 }
 
 check_basic_config
