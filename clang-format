@@ -1,0 +1,13 @@
+ColumnLimit: 60
+IndentWidth: 2
+AllowShortIfStatementsOnASingleLine : true
+AlignEscapedNewlines: Left
+AllowShortBlocksOnASingleLine : true
+AllowShortCaseLabelsOnASingleLine : true
+AllowShortFunctionsOnASingleLine : true
+AllowShortLoopsOnASingleLine : true
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: true
+# BreakInheritanceList: BeforeComma
+IndentPPDirectives: AfterHash
+IndentWrappedFunctionNames: false

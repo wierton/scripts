@@ -156,6 +156,7 @@ syntax on
 set number 
 set cursorline 
 set ruler 
+set expandtab " disable tab when auto-indent
 set shiftwidth=2
 set softtabstop=2
 set tabstop=2 

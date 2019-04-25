@@ -6,12 +6,12 @@ export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton
 export ARCH=mips
 export CROSS_COMPILE=mips-linux-gnu-
-export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0
+# export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0
 
 # cuda
-export PATH="$PATH:/usr/local/cuda-9.0/bin"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64/"
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64"
+# export PATH="$PATH:/usr/local/cuda-9.0/bin"
+# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64/"
+# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64"
 
 function sedr() {
 	sed -i "s/$1/$2/g" `grep -rl "$1"`
@@ -263,6 +263,10 @@ iface enp5s0 inet dhcp
   sudo dhclient enp5s0
 }
 
+# alias genymotion=/opt/genymobile/genymotion/genymotion
+# alias genymotion-shell=/opt/genymobile/genymotion/genymotion-shell
+# alias gmtool=/opt/genymobile/genymotion/genymotion/gmtool
+
 # apt-get install -y cpufrequtils
 # cpufreq-info, restart will override it to default mode
 alias powersave='sudo-guard && sudo cpufreq-set -g powersave'
@@ -270,5 +274,5 @@ alias userspace='sudo-guard && sudo cpufreq-set -g userspace'
 alias performance='sudo-guard && sudo cpufreq-set -g performance'
 
 # genymotion
-alias genymotion='banio ${WT_HOME}/genymotion/genymotion'
+# alias genymotion='banio ${WT_HOME}/genymotion/genymotion'
 alias cls='clear && echo -en "\e[3J"'

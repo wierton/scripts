@@ -1,10 +1,10 @@
 #!/bin/bash
 # set -v on
 
-username=ics2018
-homedir=/home/${username}
-passwd=
-script_dir=`pwd`
+username=$(logname)
+homedir=$(eval echo "~$username")
+passwd=123456
+script_dir=$(cd `dirname $0` && pwd)
 
 cd ${homedir}
 
@@ -15,6 +15,13 @@ cd ${homedir}
 # ${homedir}/.config/indicator-stickynotes
 # ${homedir}/.config/shadowsocks-qt5/*
 # ${homedir}/.ssh/*  (public key and private key)
+
+check_basic_config() {
+  read -e -p "Enter your name: " -i ${username} username
+  read -e -s -p "Enter your password: " passwd  && echo
+  read -e -p "Enter your home directory: " -i ${homedir} homedir
+  read -e -p "Check the script directory: " -i ${script_dir} script_dir
+}
 
 prepare_dup_stdout() {
   exec 3<&2
@@ -49,68 +56,73 @@ use_tsinghua_source() {
 
 install_extra_cli_source() {
   # sbt
-  echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+  echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+  sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
 }
 
 install_extra_gui_source() {
-  add-apt-repository -y ppa:umang/indicator-stickynotes &&
+  sudo add-apt-repository -y ppa:umang/indicator-stickynotes &&
   echo '
   deb http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial main
   deb-src http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial main
-  ' >> /etc/apt/sources.list # shadowsocks-qt5
+  ' | sudo tee -a /etc/apt/sources.list # shadowsocks-qt5
+}
+
+# command to write clipboard
+install_xsel() {
+  sudo apt-get install -y xsel
 }
 
 install_sbt() {
-  apt-get install -y sbt
+  sudo apt-get install -y sbt
 }
 
 install_verilator() {
-  apt-get install -y verilator
+  sudo apt-get install -y verilator
 }
 
 install_boost_libraries() {
-  apt-get install -y libboost-all-dev
+  sudo apt-get install -y libboost-all-dev
 }
 
 install_llvm_library() {
-  apt-get install -y libllvm6.0
+  sudo apt-get install -y libllvm6.0
 }
 
 install_clang_library() {
-  apt-get install -y libclang-6.0
+  sudo apt-get install -y libclang-6.0
 }
 
 install_readline_library() {
-  apt-get install -y libreadline-dev lib32readline-dev
+  sudo apt-get install -y libreadline-dev lib32readline-dev
 }
 
 install_parser_tools() {
- apt-get install -y flex bison
+ sudo apt-get install -y flex bison
 }
 
 install_useful_tool() {
-  apt-get install -y valgrind curl httpie cppman
+  sudo apt-get install -y valgrind curl httpie cppman
 }
 
 install_gcc_8() {
-  apt-get install -y gcc-8 g++-8
-  update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 50
-  update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 50
+  sudo apt-get install -y gcc-8 g++-8
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 80
+  sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 80
 }
 
 install_gcc_multilib() {
-  apt-get install -y gcc-8-multilib g++-8-multilib
+  sudo apt-get install -y gcc-8-multilib g++-8-multilib
 }
 
 install_clang_6() {
-  apt-get install -y clang-6.0
-  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 50
+  sudo apt-get install -y clang-6.0
+  sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 60
 }
 
 install_develop_essential() {
-  apt-get install -y tmux git zsh vim unzip unrar
-  apt-get install -y vim-gnome
+  sudo apt-get install -y tmux git zsh vim unzip unrar
+  sudo apt-get install -y vim-gnome
 }
 
 install_git_configure() {
@@ -130,7 +142,7 @@ install_oh_my_zsh() {
   if ! sudo -S -u ${username} chsh -s $(which zsh); then
 	exit -1;
   fi
-  sed -i "s/ZSH_THEME/# \0/g" ${homedir}/.zshrc
+  sed -i 's/ZSH_THEME=".*"/ZSH_THEME="wierton"/g' ${homedir}/.zshrc
 
   # environment
   insert_to_file "source ${homedir}/.wtrc" ${homedir}/.zshrc
@@ -146,14 +158,18 @@ post_install_oh_my_zsh() {
 }
 
 install_autojump() {
-  apt-get install -y autojump
+  sudo apt-get install -y autojump
   insert_to_file ". /usr/share/autojump/autojump.zsh" ${homedir}/.zshrc
   insert_to_file ". /usr/share/autojump/autojump.bash" ${homedir}/.bashrc
 }
 
+install_clangformat() {
+  cp ${script_dir}/clang-format ${homedir}/.clang-format
+}
+
 install_numlockx() {
   # numlock
-  apt-get install -y numlockx
+  sudo apt-get install -y numlockx
   insert_to_file "numlockx on" /etc/profile
 }
 
@@ -178,20 +194,20 @@ install_tmux_conf_and_plugin() {
 }
 
 install_cmake() {
-  apt-get install -y cmake
+  sudo apt-get install -y cmake
 }
 
 install_gnu_mips_tool_chain() {
   # cross chain
-  apt-get install -y binutils-mips-linux-gnu
-  apt-get install -y cpp-mips-linux-gnu
-  apt-get install -y g++-mips-linux-gnu
-  apt-get install -y gcc-mips-linux-gnu
-  # apt-get install -y gcc-mips-linux-gnu-base
+  sudo apt-get install -y binutils-mips-linux-gnu
+  sudo apt-get install -y cpp-mips-linux-gnu
+  sudo apt-get install -y g++-mips-linux-gnu
+  sudo apt-get install -y gcc-mips-linux-gnu
+  # sudo apt-get install -y gcc-mips-linux-gnu-base
 }
 
 install_scala() {
-  apt-get install -y scala
+  sudo apt-get install -y scala
 }
 
 install_rust() {
@@ -206,41 +222,41 @@ install_rust() {
 
 install_cli_python() {
   # python libraries
-  apt-get install -y python-pip python3-pip python-virtualenv
-  update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 10
-  update-alternatives --install /usr/bin/pip pip /usr/bin/pip2 20
-  pip2 install yd
+  sudo apt-get install -y python-pip python3-pip python-virtualenv
+  sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 10
+  sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip2 20
+  sudo pip2 install yd
 }
 
 install_qemu() {
   # qemu emulator
-  apt-get install -y qemu
+  sudo apt-get install -y qemu
 }
 
 install_sdl_library() {
-  apt-get install -y libsdl1.2-dev libsdl2-dev
-  apt-get install -y libgtk2.0-dev
-  apt-get install -y libgtk-3-dev
+  sudo apt-get install -y libsdl1.2-dev libsdl2-dev
+  sudo apt-get install -y libgtk2.0-dev
+  sudo apt-get install -y libgtk-3-dev
 
-  apt-get install -y libsdl1.2-dev:i386
-  apt-get install -y libsdl2-dev:i386
+  sudo apt-get install -y libsdl1.2-dev:i386
+  sudo apt-get install -y libsdl2-dev:i386
 }
 
 install_python_libraries() {
-  pip2 install numpy && pip3 install numpy
-  pip2 install scipy && pip3 install scipy
-  pip2 install tensorflow && pip3 install tensorflow
+  sudo pip2 install numpy && sudo pip3 install numpy
+  sudo pip2 install scipy && sudo pip3 install scipy
+  sudo pip2 install tensorflow && sudo pip3 install tensorflow
 }
 
 install_python_mysql() {
-  apt-get -y install mysql-server
-  apt-get -y install python-dev
-  apt-get -y install python-mysqldb
+  sudo apt-get -y install mysql-server
+  sudo apt-get -y install python-dev
+  sudo apt-get -y install python-mysqldb
 }
 
 install_docker() {
-  apt-get install -y docker.io
-  apt-get install -y docker-compose
+  sudo apt-get install -y docker.io
+  sudo apt-get install -y docker-compose
 }
 
 install_texlive() {
@@ -249,38 +265,57 @@ install_texlive() {
   # install synaptic
   # search for `texlive-full` `texlive` and `lyx` and then install all suggested packages
   # texmaker IDE in ubuntu
-  apt-get install -y texlive-full texlive texstudio
+  sudo apt-get install -y texlive-full texlive texstudio
 }
 
 install_ubuntu_unity_desktop_option=--no-redirect
 install_ubuntu_unity_desktop() {
-  apt-get install -y ubuntu-unity-desktop
+  sudo apt-get install -y ubuntu-unity-desktop
   dpkg-reconfigure lightdm
 }
 
 install_indicator_stickynotes() {
-  apt-get install -y indicator-stickynotes
+  sudo apt-get install -y indicator-stickynotes
 }
 
 install_shadowsocks() {
-  apt-get install -y shadowsocks-qt5
+  sudo apt-get install -y shadowsocks-qt5
 }
 
 install_proxychains4() {
-  apt-get install -y proxychains4
+  sudo apt-get install -y proxychains4
   sed -i 's/socks4  127.0.0.1 9050/socks5  127.0.0.1 1080/g' /etc/proxychains4.conf
   # sudo proxychains4 wget www.google.com
 }
 
+install_sogou_input_method() {(
+  deb='sogoupinyin_2.2.0.0108_amd64.deb'
+  wget 'http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb?st=75v1t9lv53p0PiYsQgDKTQ&e=1540289819&fn=sogoupinyin_2.2.0.0108_amd64.deb' -O $deb
+  dpkg -i $deb
+  sogou-diag
+)}
+
+install_netease_cloud_music() {(
+  deb='netease-cloud-music_1.1.0_amd64_ubuntu.deb'
+  wget 'http://202.119.32.195/cache/10/01/d1.music.126.net/6c825290adfb69e71558de8c37c44b13/netease-cloud-music_1.1.0_amd64_ubuntu.deb' -O $deb
+  dpkg -i $deb
+)}
+
+install_google_chrome_stable() {(
+  deb='google-chrome-stable_current_amd64.deb'
+  wget 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' -O $deb
+  dpkg -i $deb
+)}
+
 install_libpaxos() {(
-  apt-get install -y libevent-dev libmsgpack-dev
+  sudo apt-get install -y libevent-dev libmsgpack-dev
   git clone https://github.com/JiYou/cpaxos &&
 	cd cpaxos && mkdir output && cd output && cmake .. &&
 	make
 )}
 
 install_media_codecs() {
-  apt-get install -y ubuntu-restricted-extras
+  sudo apt-get install -y ubuntu-restricted-extras
 }
 
 run_install_instance() {(
@@ -307,7 +342,7 @@ install_cli() {
   use_tsinghua_source
   install_extra_cli_source
 
-  apt-get update && apt-get upgrade
+  sudo apt-get upgrade
 
   install verilator boost_libraries llvm_library \
 	clang_library readline_library parser_tools useful_tool \
@@ -319,26 +354,25 @@ install_cli() {
 
 install_gui() {
   install_extra_gui_source
-  apt-get update && apt-get upgrade
+  sudo apt-get upgrade
 
   install sdl_library python_libraries python_mysql docker \
 	texlive ubuntu_unity_desktop indicator_stickynotes \
-	shadowsocks proxychains4 media_codecs
+	shadowsocks proxychains4 media_codecs \
+	sogou_input_method netease_cloud_music google_chrome_stable
 }
 
-install_ics() {
-  username=ics$(date +%Y)
-  homedir=/home/$username
-  
-  install vimrc wtrc qemu tmux_conf_and_plugin \
-	git_configure oh_my_zsh autojump
+quick_env() {
+  install vimrc wtrc tmux_conf_and_plugin \
+	git_configure oh_my_zsh autojump clangformat
 }
 
-install_cli
+check_basic_config
+# install_cli
 # install_gui
-# install_ics
+quick_env
 
 # post_install_oh_my_zsh
 
 # autoremove
-apt-get autoremove
+# sudo apt-get autoremove
