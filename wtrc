@@ -1,9 +1,17 @@
 #!bin/bash
 
+export SIP=114.212.83.188
+
 export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton
 export ARCH=mips
 export CROSS_COMPILE=mips-linux-gnu-
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0
+
+# cuda
+export PATH="$PATH:/usr/local/cuda-9.0/bin"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64/"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64"
 
 function sedr() {
 	sed -i "s/$1/$2/g" `grep -rl "$1"`
@@ -26,15 +34,15 @@ function wgc() {
 }
 
 
-#java
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/bin
-PATH="$PATH:$JAVA_HOME"
+# java
+# export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/bin
+# PATH="$PATH:$JAVA_HOME"
 
-#android SDK
-export ANDROID_HOME=/D/java/android-sdk-linux
-PATH="$PATH:/D/java/android-sdk-linux"
-PATH="$PATH:/D/java/android-sdk-linux/tools"
-PATH="$PATH:/D/java/android-sdk-linux/platform-tools"
+# android SDK
+# export ANDROID_HOME=/D/java/android-sdk-linux
+# PATH="$PATH:/D/java/android-sdk-linux"
+# PATH="$PATH:/D/java/android-sdk-linux/tools"
+# PATH="$PATH:/D/java/android-sdk-linux/platform-tools"
 
 # loongson gcc
 PATH="$PATH:/opt/gcc-4.3-ls232/bin"
@@ -64,17 +72,31 @@ alias mreadelf=mips-linux-gnu-readelf
 alias mas=mips-linux-gnu-as
 alias mar=mips-linux-gnu-ar
 
+alias rld=riscv32-unknown-elf-ld
+alias rgcc=riscv32-unknown-elf-gcc
+alias rg++=riscv32-unknown-elf-g++
+alias rstrip=riscv32-unknown-elf-strip
+alias robjdump=riscv32-unknown-elf-objdump
+alias robjcopy=riscv32-unknown-elf-objcopy
+alias rreadelf=riscv32-unknown-elf-readelf
+alias ras=riscv32-unknown-elf-as
+alias rar=riscv32-unknown-elf-ar
+
 alias nemu-mips32=${WT_HOME}/nemu-mips32/build/nemu
+alias nemu-riscv32=${WT_HOME}/nemu-riscv32/build/nemu
 
 export NOOP_HOME=${WT_HOME}/noop
 export AM_HOME=${WT_HOME}/nexus-am
 export NAVY_HOME=${WT_HOME}/navy-apps
 export MIPS32_NEMU_HOME=${WT_HOME}/nemu-mips32
+export RISCV32_NEMU_HOME=${WT_HOME}/nemu-riscv32
 # export CPU_PATH=${WT_HOME}/noop.17.bin/
 export CPU_PATH=${WT_HOME}/lgz-noop/
 export CPU_IMG=noop.tcl
 # export NPC_HOME=${WT_HOME}/noop-lo
 export NSCSCC_HOME=${WT_HOME}/nscscc2018
+# export RISCV_DIR=${WT_HOME}/riscv-gnu-toolchain
+PATH="$PATH:/opt/riscv/bin"
 
 alias vimelf="vim /usr/include/elf.h"
 export PATH="$PATH:/D/IDA_Linux_v6.4"
@@ -246,3 +268,7 @@ iface enp5s0 inet dhcp
 alias powersave='sudo-guard && sudo cpufreq-set -g powersave'
 alias userspace='sudo-guard && sudo cpufreq-set -g userspace'
 alias performance='sudo-guard && sudo cpufreq-set -g performance'
+
+# genymotion
+alias genymotion='banio ${WT_HOME}/genymotion/genymotion'
+alias cls='clear && echo -en "\e[3J"'
