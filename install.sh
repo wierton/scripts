@@ -354,7 +354,7 @@ install_cli() {
 	gcc_8 gcc_multilib clang_6 develop_essential \
 	numlockx vimrc wtrc cli_python qemu \
 	tmux_conf_and_plugin cmake gnu_mips_tool_chain \
-	git_configure oh_my_zsh zsh_vim_mode autojump scala rust sbt
+	git_configure oh_my_zsh autojump scala rust sbt
 }
 
 install_gui() {
@@ -369,7 +369,7 @@ install_gui() {
 
 quick_env() {
   install vimrc wtrc tmux_conf_and_plugin \
-	git_configure oh_my_zsh zsh_vim_mode autojump clangformat
+	git_configure oh_my_zsh autojump clangformat
 }
 
 check_basic_config
