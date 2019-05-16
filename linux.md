@@ -15,3 +15,6 @@ sudo mknod rootfs/dev/console c 5 1
 grub-install --root-directory=rootfs/  /dev/sda
 
 sudo umount rootfs
+
+# simple way to run ISO
+qemu-system-x86_64 -hda ubuntu.img -boot d -cdrom /home/sk/Soft_Backup/OS\ Images/New/ubuntu-15.04-server-amd64.iso -m 640

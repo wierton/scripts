@@ -1,6 +1,6 @@
 #!bin/bash
 
-export SIP=114.212.83.188
+export SIP=114.212.81.241
 
 export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton

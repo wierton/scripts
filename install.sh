@@ -122,12 +122,17 @@ install_develop_essential() {
 
 install_git_configure() {
   sudo -S -u ${username} sh -c '
-  git config --global user.name 141242068-ouxianfei
-  git config --global user.email 141242068@smail.nju.edu.cn
+  git config --global user.name ouxianfei
+  git config --global user.email ouxianfei@smail.nju.edu.cn
   git config --global core.editor vim
   git config --global color.ui true
   git config --global push.default simple
   '
+}
+
+install_zsh_vim_mode() {
+	sudo -S -u ${username} cp ${script_dir}/zsh-vim-mode.plugin.zsh ${homedir}/.zsh-vim-mode.plugin.zsh
+	insert_to_file "source ${homedir}/.zsh-vim-mode.plugin.zsh" ${homedir}/.zshrc
 }
 
 install_oh_my_zsh_option=--no-redirect
@@ -344,7 +349,7 @@ install_cli() {
 	gcc_8 gcc_multilib clang_6 develop_essential \
 	numlockx vimrc wtrc cli_python qemu \
 	tmux_conf_and_plugin cmake gnu_mips_tool_chain \
-	git_configure oh_my_zsh autojump scala rust sbt
+	git_configure oh_my_zsh zsh_vim_mode autojump scala rust sbt
 }
 
 install_gui() {
@@ -359,7 +364,7 @@ install_gui() {
 
 quick_env() {
   install vimrc wtrc tmux_conf_and_plugin \
-	git_configure oh_my_zsh autojump clangformat
+	git_configure oh_my_zsh zsh_vim_mode autojump clangformat
 }
 
 check_basic_config
