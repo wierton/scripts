@@ -3,27 +3,27 @@
 """"""""""""""""""""""""""""""""
 
 func! CompileRun()
-	if expand('%:t') != ''
-		exec "w"
-	endif
-	if &filetype == 'c'
-		exec "!gcc % -o %< && ./%<"
-	elseif &filetype == 'cpp'
-		exec "!g++ % -o %< && ./%<"
-	elseif &filetype == 'python'
-		exec "!python %"
-	elseif &filetype == 'tex'
-		let pdfname = expand("%:r").".pdf"
-		exec "!xelatex % ".pdfname."&& evince ".pdfname." &> /dev/null"
-	elseif &filetype == 'make'
-		exec "!make"
-	elseif &filetype == 'html'
-		exec "!google-chrome-stable %"
-	elseif &filetype == 'sh'
-		exec "!bash %"
-	elseif &filetype == 'php'
-		exec "!php %"
-	endif
+  if expand('%:t') != ''
+	exec "w"
+  endif
+  if &filetype == 'c'
+	exec "!gcc % -o %< && ./%<"
+  elseif &filetype == 'cpp'
+	exec "!g++ % -o %< && ./%<"
+  elseif &filetype == 'python'
+	exec "!python %"
+  elseif &filetype == 'tex'
+	let pdfname = expand("%:r").".pdf"
+	exec "!xelatex % ".pdfname."&& evince ".pdfname." &> /dev/null"
+  elseif &filetype == 'make'
+	exec "!make"
+  elseif &filetype == 'html'
+	exec "!google-chrome-stable %"
+  elseif &filetype == 'sh'
+	exec "!bash %"
+  elseif &filetype == 'php'
+	exec "!php %"
+  endif
 endfunc
 
 inoremap <F5> <Esc>:call CompileRun() <CR>
@@ -44,25 +44,25 @@ command! -bang WatchForChangesAllFile           :call WatchForChanges('*', {'tog
 
 function! WatchForChanges(bufname, ...)
   if a:bufname == '*'
-    let id = 'WatchForChanges'.'AnyBuffer'
-    let bufspec = ''
+	let id = 'WatchForChanges'.'AnyBuffer'
+	let bufspec = ''
   else
-    if bufnr(a:bufname) == -1
-      echoerr "Buffer " . a:bufname . " doesn't exist"
-      return
-    end
-    let id = 'WatchForChanges'.bufnr(a:bufname)
-    let bufspec = a:bufname
+	if bufnr(a:bufname) == -1
+	  echoerr "Buffer " . a:bufname . " doesn't exist"
+	  return
+	end
+	let id = 'WatchForChanges'.bufnr(a:bufname)
+	let bufspec = a:bufname
   end
 
   if len(a:000) == 0
-    let options = {}
+	let options = {}
   else
-    if type(a:1) == type({})
-      let options = a:1
-    else
-      echoerr "Argument must be a Dict"
-    end
+	if type(a:1) == type({})
+	  let options = a:1
+	else
+	  echoerr "Argument must be a Dict"
+	end
   end
   let autoread    = has_key(options, 'autoread')    ? options['autoread']    : 0
   let toggle      = has_key(options, 'toggle')      ? options['toggle']      : 0
@@ -71,9 +71,9 @@ function! WatchForChanges(bufname, ...)
   let while_in_this_buffer_only = has_key(options, 'while_in_this_buffer_only') ? options['while_in_this_buffer_only'] : 0
 
   if while_in_this_buffer_only
-    let event_bufspec = a:bufname
+	let event_bufspec = a:bufname
   else
-    let event_bufspec = '*'
+	let event_bufspec = '*'
   end
 
   let reg_saved = @"
@@ -82,65 +82,65 @@ function! WatchForChanges(bufname, ...)
 
   " Check to see if the autocommand already exists
   redir @"
-    silent! exec 'au '.id
+  silent! exec 'au '.id
   redir END
   let l:defined = (@" !~ 'E216: No such group or event:')
 
   " If not yet defined...
   if !l:defined
-    if l:autoread
-      let msg = msg . 'Autoread enabled - '
-      if a:bufname == '*'
-        set autoread
-      else
-        setlocal autoread
-      end
-    end
-    silent! exec 'augroup '.id
-      if a:bufname != '*'
-        "exec "au BufDelete    ".a:bufname . " :silent! au! ".id . " | silent! augroup! ".id
-        "exec "au BufDelete    ".a:bufname . " :echomsg 'Removing autocommands for ".id."' | au! ".id . " | augroup! ".id
-        exec "au BufDelete    ".a:bufname . " execute 'au! ".id."' | execute 'augroup! ".id."'"
-      end
-        exec "au BufEnter     ".event_bufspec . " :silent! checktime ".bufspec
-        exec "au CursorHold   ".event_bufspec . " :silent! checktime ".bufspec
-        exec "au CursorHoldI  ".event_bufspec . " :silent! checktime ".bufspec
+	if l:autoread
+	  let msg = msg . 'Autoread enabled - '
+	  if a:bufname == '*'
+		set autoread
+	  else
+		setlocal autoread
+	  end
+	end
+	silent! exec 'augroup '.id
+	if a:bufname != '*'
+	  "exec "au BufDelete    ".a:bufname . " :silent! au! ".id . " | silent! augroup! ".id
+	  "exec "au BufDelete    ".a:bufname . " :echomsg 'Removing autocommands for ".id."' | au! ".id . " | augroup! ".id
+	  exec "au BufDelete    ".a:bufname . " execute 'au! ".id."' | execute 'augroup! ".id."'"
+	end
+	exec "au BufEnter     ".event_bufspec . " :silent! checktime ".bufspec
+	exec "au CursorHold   ".event_bufspec . " :silent! checktime ".bufspec
+	exec "au CursorHoldI  ".event_bufspec . " :silent! checktime ".bufspec
 
-      " The following events might slow things down so we provide a way to disable them...
-      " vim docs warn:
-      "   Careful: Don't do anything that the user does
-      "   not expect or that is slow.
-      if more_events
-        exec "au CursorMoved  ".event_bufspec . " :silent! checktime ".bufspec
-        exec "au CursorMovedI ".event_bufspec . " :silent! checktime ".bufspec
-      end
-    augroup END
-    let msg = msg . 'Now watching ' . bufspec . ' for external updates...'
+	" The following events might slow things down so we provide a way to disable them...
+	" vim docs warn:
+	"   Careful: Don't do anything that the user does
+	"   not expect or that is slow.
+	if more_events
+	  exec "au CursorMoved  ".event_bufspec . " :silent! checktime ".bufspec
+	  exec "au CursorMovedI ".event_bufspec . " :silent! checktime ".bufspec
+	end
+  augroup END
+  let msg = msg . 'Now watching ' . bufspec . ' for external updates...'
+end
+
+" If they want to disable it, or it is defined and they want to toggle it,
+if l:disable || (l:toggle && l:defined)
+  if l:autoread
+	let msg = msg . 'Autoread disabled - '
+	if a:bufname == '*'
+	  set noautoread
+	else
+	  setlocal noautoread
+	end
   end
+  " Using an autogroup allows us to remove it easily with the following
+  " command. If we do not use an autogroup, we cannot remove this
+  " single :checktime command
+  " augroup! checkforupdates
+  silent! exec 'au! '.id
+  silent! exec 'augroup! '.id
+  let msg = msg . 'No longer watching ' . bufspec . ' for external updates.'
+elseif l:defined
+  let msg = msg . 'Already watching ' . bufspec . ' for external updates'
+end
 
-  " If they want to disable it, or it is defined and they want to toggle it,
-  if l:disable || (l:toggle && l:defined)
-    if l:autoread
-      let msg = msg . 'Autoread disabled - '
-      if a:bufname == '*'
-        set noautoread
-      else
-        setlocal noautoread
-      end
-    end
-    " Using an autogroup allows us to remove it easily with the following
-    " command. If we do not use an autogroup, we cannot remove this
-    " single :checktime command
-    " augroup! checkforupdates
-    silent! exec 'au! '.id
-    silent! exec 'augroup! '.id
-    let msg = msg . 'No longer watching ' . bufspec . ' for external updates.'
-  elseif l:defined
-    let msg = msg . 'Already watching ' . bufspec . ' for external updates'
-  end
-
-  "echo msg
-  let @"=reg_saved
+"echo msg
+let @"=reg_saved
 endfunction
 
 autocmd VimEnter * WatchForChangesAllFile! 
@@ -156,9 +156,10 @@ syntax on
 set number 
 set cursorline 
 set ruler 
+set expandtab " disable tab when auto-indent
 set shiftwidth=2
-set softtabstop=4 
-set tabstop=4 
+set softtabstop=2
+set tabstop=2 
 set nobackup 
 set autochdir 
 filetype plugin indent on 

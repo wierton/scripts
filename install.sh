@@ -68,6 +68,11 @@ install_extra_gui_source() {
   ' | sudo tee -a /etc/apt/sources.list # shadowsocks-qt5
 }
 
+# command to write clipboard
+install_xsel() {
+  sudo apt-get install -y xsel
+}
+
 install_sbt() {
   sudo apt-get install -y sbt
 }
