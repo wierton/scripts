@@ -159,7 +159,7 @@ set ruler
 set expandtab " disable tab when auto-indent
 set shiftwidth=2
 set softtabstop=2
-set tabstop=2 
+set tabstop=4
 set nobackup 
 set autochdir 
 filetype plugin indent on 
