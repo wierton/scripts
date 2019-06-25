@@ -243,8 +243,8 @@ install_sdl_library() {
   sudo apt-get install -y libgtk2.0-dev
   sudo apt-get install -y libgtk-3-dev
 
-  sudo apt-get install -y libsdl1.2-dev:i386
-  sudo apt-get install -y libsdl2-dev:i386
+  # sudo apt-get install -y libsdl1.2-dev:i386
+  # sudo apt-get install -y libsdl2-dev:i386
 }
 
 install_python_libraries() {
@@ -344,10 +344,10 @@ install() {
 }
 
 install_cli() {
-  use_tsinghua_source
+  # use_tsinghua_source
   install_extra_cli_source
 
-  sudo apt-get upgrade
+  sudo apt-get update
 
   install verilator boost_libraries llvm_library \
 	clang_library readline_library parser_tools useful_tool \
@@ -359,7 +359,7 @@ install_cli() {
 
 install_gui() {
   install_extra_gui_source
-  sudo apt-get upgrade
+  sudo apt-get update
 
   install sdl_library python_libraries python_mysql docker \
 	texlive ubuntu_unity_desktop indicator_stickynotes \
@@ -373,9 +373,9 @@ quick_env() {
 }
 
 check_basic_config
-# install_cli
-# install_gui
-quick_env
+install_cli
+install_gui
+# quick_env
 
 # post_install_oh_my_zsh
 
