@@ -61,11 +61,6 @@ install_extra_cli_source() {
 }
 
 install_extra_gui_source() {
-  sudo add-apt-repository -y ppa:umang/indicator-stickynotes &&
-  echo '
-  deb http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial main
-  deb-src http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial main
-  ' | sudo tee -a /etc/apt/sources.list # shadowsocks-qt5
 }
 
 # command to write clipboard
