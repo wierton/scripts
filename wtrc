@@ -1,5 +1,11 @@
 #!bin/bash
 
+# adjust the zsh history limit
+# export HISTFILE="$HOME/.history"
+export HISTSIZE=2000
+export SAVEHIST=$HISTSIZE # won't work without this env var
+# setopt hist_ignore_all_dups
+
 export SIP=114.212.81.241
 
 export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
@@ -98,8 +104,9 @@ export ZSH_THEME=wierton
 # export PATH="$PATH:${WT_HOME}/Downloads/cling_2017-11-03_ubuntu16/bin"
 export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
-alias jllvm="cd ${WT_HOME}/llvm/include/llvm"
-alias jclang="cd ${WT_HOME}/llvm/tools/clang"
+LLVM_HOME=${WT_HOME}/llvm-6.0.1.src
+alias jllvm="cd ${LLVM_HOME}/include/llvm"
+alias jclang="cd ${LLVM_HOME}/tools/clang"
 alias sudo-guard="sudo sh -c exit"
 alias open-psmouse="sudo-guard && sudo modprobe -i psmouse"
 alias close-psmouse="sudo-guard && sudo modprobe -r psmouse"
