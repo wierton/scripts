@@ -2,7 +2,7 @@
 
 # adjust the zsh history limit
 # export HISTFILE="$HOME/.history"
-export HISTSIZE=2000
+export HISTSIZE=10000000
 export SAVEHIST=$HISTSIZE # won't work without this env var
 # setopt hist_ignore_all_dups
 
