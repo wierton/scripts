@@ -11,3 +11,4 @@ AlwaysBreakTemplateDeclarations: true
 # BreakInheritanceList: BeforeComma
 IndentPPDirectives: AfterHash
 IndentWrappedFunctionNames: false
+AlignAfterOpenBracket: false
