@@ -116,7 +116,8 @@ install_clang_6() {
 }
 
 install_develop_essential() {
-  sudo apt-get install -y tmux git zsh vim unzip unrar
+  # vidir is in moreutils
+  sudo apt-get install -y tmux git zsh vim unzip unrar moreutils
   sudo apt-get install -y vim-gnome
 }
 
@@ -176,6 +177,8 @@ install_numlockx() {
 install_vimrc() {
   # vimrc
   cp ${script_dir}/vimrc  ${homedir}/.vimrc
+  mkdir -p ${homedir}/.vim && cp -r ${script_dir}/_vim/* ${homedir}/.vim
+  # in vim: vim %.vba.gz : so % :q
 }
 
 install_wtrc() {
@@ -307,6 +310,10 @@ install_google_chrome_stable() {(
   dpkg -i $deb
 )}
 
+install_mplayer() {(
+  sudo apt-get install -y mplayer
+)}
+
 install_libpaxos() {(
   sudo apt-get install -y libevent-dev libmsgpack-dev
   git clone https://github.com/JiYou/cpaxos &&
@@ -359,7 +366,8 @@ install_gui() {
   install sdl_library python_libraries python_mysql docker \
 	texlive ubuntu_unity_desktop indicator_stickynotes \
 	shadowsocks proxychains4 media_codecs \
-	sogou_input_method netease_cloud_music google_chrome_stable
+	sogou_input_method netease_cloud_music google_chrome_stable \
+    mplayer
 }
 
 quick_env() {
