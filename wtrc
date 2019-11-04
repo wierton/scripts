@@ -10,53 +10,24 @@ export SIP=114.212.81.241
 
 export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton
-# export ARCH=mips
-# export CROSS_COMPILE=mips-linux-gnu-
-# export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0
-
-# cuda
-# export PATH="$PATH:/usr/local/cuda-9.0/bin"
-# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda-9.0/lib64/"
-# export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64"
-
-function sedr() {
-	sed -i "s/$1/$2/g" `grep -rl "$1"`
-	return $?
-}
-
-function renamer() {
-	rename "s/$1/$2/g" `find . -name "*$1*"`
-	return $?
-}
-
-function banio() {
-	nohup $* </dev/null 1>/dev/null 2>&1 &
-	return $?
-}
-
-# java
-# export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/bin
-# PATH="$PATH:$JAVA_HOME"
-
-# android SDK
-# export ANDROID_HOME=/D/java/android-sdk-linux
-# PATH="$PATH:/D/java/android-sdk-linux"
-# PATH="$PATH:/D/java/android-sdk-linux/tools"
-# PATH="$PATH:/D/java/android-sdk-linux/platform-tools"
-
-# loongson gcc
-# PATH="$PATH:/opt/gcc-4.3-ls232/bin"
 
 # Vivado
 PATH="$PATH:/opt/Xilinx/Vivado/2018.1/bin"
 
-# virtualenv and virtualenvwrapper
-#export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
-#export WORKON_HOME=$HOME/.virtualenvs
-#source /usr/local/bin/virtualenvwrapper.sh
+alias cls='clear && echo -en "\e[3J"'
 
-# export HADOOP_CLASSPATH=${JAVA_HOME}/lib/tools.jar
-# PATH="$PATH:/D/hadoop/bin"
+function sedr() {
+  sed -i "s/$1/$2/g" `grep -rl "$1"`
+}
+
+function renamer() {
+  rename "s/$1/$2/g" `find . -name "*$1*"`
+}
+
+function banio() {
+  nohup $* </dev/null 1>/dev/null 2>&1 &
+}
+
 # eval $(thefuck --alias)
 
 alias mld=mips-linux-gnu-ld
@@ -79,179 +50,36 @@ alias rreadelf=riscv32-unknown-elf-readelf
 alias ras=riscv32-unknown-elf-as
 alias rar=riscv32-unknown-elf-ar
 
-alias nemu-mips32=${WT_HOME}/nemu-mips32/build/nemu
-alias nemu-riscv32=${WT_HOME}/nemu-riscv32/build/nemu
-
+# export ARCH=mips
+# export CROSS_COMPILE=mips-linux-gnu-
 export NOOP_HOME=${WT_HOME}/noop
 export AM_HOME=${WT_HOME}/nexus-am
 export NAVY_HOME=${WT_HOME}/navy-apps
 export MIPS32_NEMU_HOME=${WT_HOME}/nemu-mips32
 export RISCV32_NEMU_HOME=${WT_HOME}/nemu-riscv32
-# export CPU_PATH=${WT_HOME}/noop.17.bin/
-export CPU_PATH=${WT_HOME}/lgz-noop/
-export CPU_IMG=noop.tcl
 # export NPC_HOME=${WT_HOME}/noop-lo
 export NSCSCC_HOME=${WT_HOME}/nscscc2018
-# export RISCV_DIR=${WT_HOME}/riscv-gnu-toolchain
-# PATH="$PATH:/opt/riscv/bin"
 
 alias vimelf="vim /usr/include/elf.h"
-# export PATH="$PATH:/D/IDA_Linux_v6.4"
 
 #export ZSH_THEME=aussiegeek
 export ZSH_THEME=wierton
 
 # export PATH="$PATH:${WT_HOME}/Downloads/cling_2017-11-03_ubuntu16/bin"
-export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
+# export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 
+# LLVM home
 LLVM_HOME=${WT_HOME}/llvm-6.0.1.src
 alias jllvm="cd ${LLVM_HOME}/include/llvm"
 alias jclang="cd ${LLVM_HOME}/tools/clang"
+
+# psmouse
 alias sudo-guard="sudo sh -c exit"
 alias open-psmouse="sudo-guard && sudo modprobe -i psmouse"
 alias close-psmouse="sudo-guard && sudo modprobe -r psmouse"
-# alias minecraft="(banio minecraft)"
-# alias netease-cloud-music="(sudo-guard && banio sudo netease-cloud-music)"
-# alias gtkterm="(sudo-guard && sudo gtkterm --port /dev/ttyACM0 --speed 115200 &)"
-# alias vivado="(cd ~/tmp && banio vivado)" # the relative path
-
-# FPGA
-# IP=192.168.1.17
-# alias ssh-cpu="sshpass -p root ssh root@$IP"
-# alias serial-cpu="sudo minicom -D /dev/ttyACM0 -c on"
-# alias cpu-out="sshpass -p root ssh -t root@$IP 'rm cpu.out && minicom -D /dev/ttyPS1 -c on -C cpu.out'"
-
-function upload() {
-	sshpass -p root scp $1 root@$IP:~/
-}
-
-function bin2mif() {(
-  l=4
-  while [ -n "$1" ]; do
-	case "$1" in
-	  -h) echo bin2mif -l length filename;
-		  exit 0 ;;
-	  -l) l=$2
-		  shift ;;
-	   *) f=$1
-		 ;;
-	esac
-	shift
-  done
-
-  if [ -n "$f" ]; then
-	hexdump -ve 1/$l\ \"%0$(( $l*2 ))x\\n\" $f |
-	  sed 's/0/0000/g;s/1/0001/g;s/2/0010/g;s/3/0011/g;
-	       s/4/0100/g;s/5/0101/g;s/6/0110/g;s/7/0111/g;
-	       s/8/1000/g;s/9/1001/g;s/a/1010/g;s/b/1011/g;
-	       s/c/1100/g;s/d/1101/g;s/e/1110/g;s/f/1111/g;'
-  else
-	echo "no input files"
-  fi
-)}
-
-function bin2txt() {(
-  l=4
-  while [ -n "$1" ]; do
-	case "$1" in
-	  -h) echo bin2txt -l length filename;
-		  exit 0 ;;
-	  -l) l=$2
-		  shift ;;
-	   *) f=$1
-		 ;;
-	esac
-	shift
-  done
-
-  if [ -n "$f" ]; then
-	hexdump -ve 1/$l\ \"%0$(( $l*2 ))x\ \" $f | fmt --width 60
-  else
-	echo "no input files"
-  fi
-)}
-
-function bin2coe() {(
-  l=4
-  while [ -n "$1" ]; do
-	case "$1" in
-	  -h) echo bin2coe -l length filename;
-		  exit 0 ;;
-	  -l) l=$2
-		  shift ;;
-	   *) f=$1
-		 ;;
-	esac
-	shift
-  done
-
-  if [ -n "$f" ]; then
-	hexdump -ve 1/$l\ \"%0$(( $l*2 ))x\\n\" $f | sed 1i'memory_initialization_radix = 16;\nmemory_initialization_vector ='
-  else
-	echo "no input files"
-  fi
-)}
-
-function to-uImage() {
-  mips-linux-gnu-objcopy -O binary -R .note -R .comment –S $1 $1.bin
-  xz -c $1.bin > $1.bin.xz
-}
-
-function start-kernel() {
-  nemu-mips32 -i ~/u-boot/u-boot.bin -u ~/linux-4.11.4/arch/mips/boot/uImage.bin -S ~/linux-4.11.4/vmlinux $*
-}
-
-function wire-direct() {
-  sudo-guard
-  sudo sh -c 'echo "# interfaces(5) file used by ifup(8) and ifdown(8)
-auto lo
-iface lo inet loopback
-
-# auto enp5s0
-# iface enp5s0 inet dhcp
-iface enp5s0 inet static
-address 192.168.1.1
-netmask 255.255.255.0
-gateway 192.168.1.1
-broadcast 192.168.1.255" > /etc/network/interfaces'
-  sudo ifconfig enp5s0 192.168.1.1
-  sudo /etc/init.d/networking restart
-  # sudo systemctl restart NetworkManager
-  sudo ifconfig enp5s0 192.168.1.1
-}
-
-function wired() {
-  sudo-guard
-  sudo sh -c 'echo "# interfaces(5) file used by ifup(8) and ifdown(8)
-auto lo
-iface lo inet loopback
-
-auto enp5s0
-iface enp5s0 inet dhcp
-# iface enp5s0 inet static
-# address 192.168.1.1
-# netmask 255.255.255.0
-# gateway 192.168.1.1
-# broadcast 192.168.1.255" > /etc/network/interfaces'
-  sudo ifconfig enp5s0 down
-  sudo /etc/init.d/networking restart
-  sudo ifconfig enp5s0 up
-  sudo sed -i 's/managed=false/managed=true/g' /etc/NetworkManager/NetworkManager.conf
-  sudo systemctl restart NetworkManager
-  sudo dhclient enp5s0
-}
-
-# alias genymotion=/opt/genymobile/genymotion/genymotion
-# alias genymotion-shell=/opt/genymobile/genymotion/genymotion-shell
-# alias gmtool=/opt/genymobile/genymotion/genymotion/gmtool
 
 # apt-get install -y cpufrequtils
 # cpufreq-info, restart will override it to default mode
-alias powersave='sudo-guard && sudo cpufreq-set -g powersave'
-alias userspace='sudo-guard && sudo cpufreq-set -g userspace'
-alias performance='sudo-guard && sudo cpufreq-set -g performance'
-
-# genymotion
-# alias genymotion='banio ${WT_HOME}/genymotion/genymotion'
-alias cls='clear && echo -en "\e[3J"'
-# eval $(thefuck -a)
+# alias powersave='sudo-guard && sudo cpufreq-set -g powersave'
+# alias userspace='sudo-guard && sudo cpufreq-set -g userspace'
+# alias performance='sudo-guard && sudo cpufreq-set -g performance'
