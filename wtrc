@@ -6,7 +6,8 @@ export HISTSIZE=10000000
 export SAVEHIST=$HISTSIZE # won't work without this env var
 # setopt hist_ignore_all_dups
 
-export SIP=114.212.81.241
+export SSS=wierton@114.212.81.241
+export XFOU=xfou@114.212.190.145
 
 export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton
