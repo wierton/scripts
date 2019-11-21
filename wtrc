@@ -4,10 +4,12 @@
 # export HISTFILE="$HOME/.history"
 export HISTSIZE=10000000
 export SAVEHIST=$HISTSIZE # won't work without this env var
+unset LD_PRELOAD
 # setopt hist_ignore_all_dups
 
-export SSS=wierton@114.212.81.241
-export XFOU=xfou@114.212.190.145
+if [ -f .envrc ]; then
+  source .envrc;
+fi
 
 export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton
@@ -41,15 +43,15 @@ alias mreadelf=mips-linux-gnu-readelf
 alias mas=mips-linux-gnu-as
 alias mar=mips-linux-gnu-ar
 
-alias rld=riscv32-unknown-elf-ld
-alias rgcc=riscv32-unknown-elf-gcc
-alias rg++=riscv32-unknown-elf-g++
-alias rstrip=riscv32-unknown-elf-strip
-alias robjdump=riscv32-unknown-elf-objdump
-alias robjcopy=riscv32-unknown-elf-objcopy
-alias rreadelf=riscv32-unknown-elf-readelf
-alias ras=riscv32-unknown-elf-as
-alias rar=riscv32-unknown-elf-ar
+# alias rld=riscv32-unknown-elf-ld
+# alias rgcc=riscv32-unknown-elf-gcc
+# alias rg++=riscv32-unknown-elf-g++
+# alias rstrip=riscv32-unknown-elf-strip
+# alias robjdump=riscv32-unknown-elf-objdump
+# alias robjcopy=riscv32-unknown-elf-objcopy
+# alias rreadelf=riscv32-unknown-elf-readelf
+# alias ras=riscv32-unknown-elf-as
+# alias rar=riscv32-unknown-elf-ar
 
 # export ARCH=mips
 # export CROSS_COMPILE=mips-linux-gnu-
