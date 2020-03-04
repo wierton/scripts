@@ -1,14 +1,19 @@
-ColumnLimit: 80
-IndentWidth: 2
-AllowShortIfStatementsOnASingleLine : true
+AlignAfterOpenBracket: false
+ContinuationIndentWidth: 4
+# AlignConsecutiveDeclarations: true
 AlignEscapedNewlines: Left
+AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine : true
 AllowShortCaseLabelsOnASingleLine : true
 AllowShortFunctionsOnASingleLine : true
+AllowShortIfStatementsOnASingleLine : true
 AllowShortLoopsOnASingleLine : true
 AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: true
+BinPackArguments: true
+BinPackParameters: true
 # BreakInheritanceList: BeforeComma
+ColumnLimit: 60
 IndentPPDirectives: AfterHash
+IndentWidth: 2
 IndentWrappedFunctionNames: false
-AlignAfterOpenBracket: false
