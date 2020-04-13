@@ -314,6 +314,12 @@ install_mplayer() {(
   sudo apt-get install -y mplayer
 )}
 
+install_fonts() {(
+  sudo apt-get install -y ttf-wqy-microhei
+  sudo apt-get install -y ttf-wqy-zenhei
+  sudo apt-get install -y xfonts-wqy
+)}
+
 install_libpaxos() {(
   sudo apt-get install -y libevent-dev libmsgpack-dev
   git clone https://github.com/JiYou/cpaxos &&
