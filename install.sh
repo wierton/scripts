@@ -89,6 +89,7 @@ quick_env() {
   cp ${script_dir}/wtrc ${homedir}/.wtrc
 
   # oh-my-zsh
+  sudo apt-get install zsh
   sudo -S -u ${username} sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - 2>/dev/null)"
   if sudo -S -u ${username} chsh -s $(which zsh); then
     sed -i 's/ZSH_THEME=".*"/ZSH_THEME="wierton"/g' ${homedir}/.zshrc
@@ -102,7 +103,7 @@ quick_env() {
   fi
 
   insert_to_file "unsetopt BG_NICE" ${homedir}/.zshrc
-  insert_to_file "unsetopt BG_NICE" ${homedir}/.bashrc
+  # insert_to_file "unsetopt BG_NICE" ${homedir}/.bashrc
 
   # autojump for zsh
   sudo apt-get install -y autojump
@@ -146,14 +147,10 @@ install_cli() {
     libllvm10 libclang-10-dev \
     flex bison valgrind curl httpie cppman \
     tmux git zsh vim unzip unrar moreutils cmake \
-    scala python3-pip qemu sbt
-
-  sudo apt-get install -y binutils-mips-linux-gnu \
+    scala python3-pip qemu sbt \
+    binutils-mips-linux-gnu \
     cpp-mips-linux-gnu g++-mips-linux-gnu \
     gcc-mips-linux-gnu
-
-  sudo apt-get install -y libsdl1.2-dev libsdl2-dev \
-    libgtk2.0-dev libgtk-3-dev
 
   sudo pip3 install numpy scipy tensorflow
 
@@ -166,11 +163,19 @@ install_cli() {
 install_gui() {
   install_cli
 
-  sudo apt-get install docker.io docker-compose \
+  sudo apt-get -y install docker.io docker-compose \
     texlive-full texlive texstudio \
-    ubuntu-unity-desktop indicator-stickynotes \
+    ubuntu-unity-desktop \
     proxychains4 mplayer ubuntu-restricted-extras \
-    xsel
+    xsel libsdl1.2-dev libsdl2-dev \
+    libgtk2.0-dev libgtk-3-dev \
+    fonts-wqy-microhei fonts-wqy-zenhei xfonts-wqy
+
+  sudo snap install qv2ray
+  # fonts for deepinwine-qq
+  # ttf-wqy-microhei ttf-wqy-zenhei xfonts-wqy
+  # -> fonts-wqy-microhei fonts-wqy-zenhei
+
 
   deb='google-chrome-stable_current_amd64.deb'
   wget 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' -O $deb
@@ -178,6 +183,6 @@ install_gui() {
 }
 
 check_basic_config
-# install_cli
-install_gui
+install_cli
+# install_gui
 # quick_env
