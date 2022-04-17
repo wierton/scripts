@@ -7,7 +7,7 @@ func! CompileRun()
 	exec "w"
   endif
   if &filetype == 'c'
-	exec "!gcc % -o %< && ./%<"
+	exec "!gcc -w % -o %< && ./%<"
   elseif &filetype == 'cpp'
 	exec "!g++ % -o %< && ./%<"
   elseif &filetype == 'python'
@@ -28,12 +28,15 @@ endfunc
 
 inoremap <F5> <Esc>:call CompileRun() <CR>
 nnoremap <F5> <Esc>:call CompileRun() <CR>
-nnoremap <C-l> :exec "!yd ".substitute(expand("<cword>"), "\n", " ", "g") <CR>
-vnoremap <C-l> y:exec "!yd ".substitute(getreg("0"), "\n", " ", "g") <CR>
+" nnoremap <C-l> :exec "!yd ".substitute(expand("<cword>"), "\n", " ", "g") <CR>
+" vnoremap <C-l> y:exec "!yd ".substitute(getreg("0"), "\n", " ", "g") <CR>
 nnoremap <C-k> <Esc>:%!clang-format<CR><C-o>
 
 noremap + <C-w>+
 noremap - <C-w>-
+
+"adjust python indent to 2 space"
+autocmd Filetype py setl shiftwidth=2
 
 "==================="
 set tags=./tags;,tags
