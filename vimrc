@@ -2,41 +2,12 @@
 " wierton's vim configure file "
 """"""""""""""""""""""""""""""""
 
-func! CompileRun()
-  if expand('%:t') != ''
-	exec "w"
-  endif
-  if &filetype == 'c'
-	exec "!gcc -w % -o %< && ./%<"
-  elseif &filetype == 'cpp'
-	exec "!g++ % -o %< && ./%<"
-  elseif &filetype == 'python'
-	exec "!python %"
-  elseif &filetype == 'tex'
-	let pdfname = expand("%:r").".pdf"
-	exec "!xelatex % ".pdfname."&& evince ".pdfname." &> /dev/null"
-  elseif &filetype == 'make'
-	exec "!make"
-  elseif &filetype == 'html'
-	exec "!google-chrome-stable %"
-  elseif &filetype == 'sh'
-	exec "!bash %"
-  elseif &filetype == 'php'
-	exec "!php %"
-  endif
-endfunc
-
-inoremap <F5> <Esc>:call CompileRun() <CR>
-nnoremap <F5> <Esc>:call CompileRun() <CR>
 " nnoremap <C-l> :exec "!yd ".substitute(expand("<cword>"), "\n", " ", "g") <CR>
 " vnoremap <C-l> y:exec "!yd ".substitute(getreg("0"), "\n", " ", "g") <CR>
 nnoremap <C-k> <Esc>:%!clang-format<CR><C-o>
 
 noremap + <C-w>+
 noremap - <C-w>-
-
-"adjust python indent to 2 space"
-autocmd Filetype py setl shiftwidth=2
 
 "==================="
 set tags=./tags;,tags
@@ -51,7 +22,7 @@ set ruler
 set expandtab " disable tab when auto-indent
 set shiftwidth=2
 set softtabstop=2
-set tabstop=4
+set tabstop=2
 set nobackup 
 set autochdir 
 filetype plugin indent on 
