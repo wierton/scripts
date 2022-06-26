@@ -44,6 +44,7 @@ set laststatus=2
 set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ Ln\ %l,\ Col\ %c/%L%) 
 set foldenable 
 set cinoptions+=l1
+au FileType c,cpp setl cindent cinoptions+=:0
 "set foldmethod=syntax 
 set foldcolumn=0 
 setlocal foldlevel=1 
