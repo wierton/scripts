@@ -15,9 +15,26 @@ export QT_SCALE_FACTOR=1.0 # for 1980x1680 display
 export WT_HOME=/home/wierton
 
 # Vivado
-PATH="$PATH:/opt/Xilinx/Vivado/2018.1/bin"
+PATH="$PATH:/opt/Xilinx/Vivado/2019.2/bin"
+
+# cargo
+PATH="$PATH:$WT_HOME/.cargo/bin"
 
 alias cls='clear && echo -en "\e[3J"'
+
+function clear_proxy() {
+  unset all_proxy
+  unset ftp_proxy
+  unset http_proxy
+  unset https_proxy
+  unset no_proxy
+
+  unset ALL_PROXY
+  unset FTP_PROXY
+  unset HTTP_PROXY
+  unset HTTPS_PROXY
+  unset NO_PROXY
+}
 
 function sedr() {
   sed -i "s/$1/$2/g" `grep -rl "$1"`
@@ -87,3 +104,7 @@ alias close-psmouse="sudo-guard && sudo modprobe -r psmouse"
 # alias powersave='sudo-guard && sudo cpufreq-set -g powersave'
 # alias userspace='sudo-guard && sudo cpufreq-set -g userspace'
 # alias performance='sudo-guard && sudo cpufreq-set -g performance'
+
+export NEMU_HOME=/home/wierton/ics-pa/nemu
+export AM_HOME=/home/wierton/ics-pa/abstract-machine
+export NAVY_HOME=/home/wierton/ics-pa/navy-apps

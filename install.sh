@@ -23,11 +23,6 @@ check_basic_config() {
   read -e -p "Check the script directory: " -i ${script_dir} script_dir
 }
 
-prepare_dup_stdout() {
-  exec 3<&2
-  # echo Hello World >&3
-}
-
 insert_to_file() {
   # 1: string, 2: file
   if ! grep -F "$1" "$2"; then
@@ -54,214 +49,6 @@ use_tsinghua_source() {
   )
 }
 
-install_extra_cli_source() {
-  # sbt
-  echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
-  sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
-}
-
-install_extra_gui_source() {
-}
-
-# command to write clipboard
-install_xsel() {
-  sudo apt-get install -y xsel
-}
-
-install_sbt() {
-  sudo apt-get install -y sbt
-}
-
-install_verilator() {
-  sudo apt-get install -y verilator
-}
-
-install_boost_libraries() {
-  sudo apt-get install -y libboost-all-dev
-}
-
-install_llvm_library() {
-  sudo apt-get install -y libllvm6.0
-}
-
-install_clang_library() {
-  sudo apt-get install -y libclang-6.0
-}
-
-install_readline_library() {
-  sudo apt-get install -y libreadline-dev lib32readline-dev
-}
-
-install_parser_tools() {
- sudo apt-get install -y flex bison
-}
-
-install_useful_tool() {
-  sudo apt-get install -y valgrind curl httpie cppman
-}
-
-install_gcc_8() {
-  sudo apt-get install -y gcc-8 g++-8
-  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 80
-  sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 80
-}
-
-install_gcc_multilib() {
-  sudo apt-get install -y gcc-8-multilib g++-8-multilib
-}
-
-install_clang_6() {
-  sudo apt-get install -y clang-6.0
-  sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 60
-}
-
-install_develop_essential() {
-  # vidir is in moreutils
-  sudo apt-get install -y tmux git zsh vim unzip unrar moreutils
-  sudo apt-get install -y vim-gnome
-}
-
-install_git_configure() {
-  sudo -S -u ${username} sh -c '
-  git config --global user.name ouxianfei
-  git config --global user.email ouxianfei@smail.nju.edu.cn
-  git config --global core.editor vim
-  git config --global color.ui true
-  git config --global push.default simple
-  '
-}
-
-install_zsh_vim_mode() {
-	sudo -S -u ${username} cp ${script_dir}/zsh-vim-mode.plugin.zsh ${homedir}/.zsh-vim-mode.plugin.zsh
-	insert_to_file "source ${homedir}/.zsh-vim-mode.plugin.zsh" ${homedir}/.zshrc
-}
-
-install_oh_my_zsh_option=--no-redirect
-install_oh_my_zsh() {
-  # oh-my-zsh
-  sudo -S -u ${username} sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - 2>/dev/null)"
-  if ! sudo -S -u ${username} chsh -s $(which zsh); then
-	exit -1;
-  fi
-  sed -i 's/ZSH_THEME=".*"/ZSH_THEME="wierton"/g' ${homedir}/.zshrc
-
-  # environment
-  insert_to_file "source ${homedir}/.wtrc" ${homedir}/.zshrc
-  insert_to_file "source ${homedir}/.wtrc" ${homedir}/.bashrc
-
-  # oh-my-zsh config
-  sudo -S -u ${username} cp ${script_dir}/wierton.zsh-theme ${homedir}/.oh-my-zsh/themes
-}
-
-post_install_oh_my_zsh() {
-  insert_to_file "unsetopt BG_NICE" ${homedir}/.zshrc
-  insert_to_file "unsetopt BG_NICE" ${homedir}/.bashrc
-}
-
-install_autojump() {
-  sudo apt-get install -y autojump
-  insert_to_file ". /usr/share/autojump/autojump.zsh" ${homedir}/.zshrc
-  insert_to_file ". /usr/share/autojump/autojump.bash" ${homedir}/.bashrc
-}
-
-install_clangformat() {
-  cp ${script_dir}/clang-format ${homedir}/.clang-format
-}
-
-install_numlockx() {
-  # numlock
-  sudo apt-get install -y numlockx
-  insert_to_file "numlockx on" /etc/profile
-}
-
-install_vimrc() {
-  # vimrc
-  cp ${script_dir}/vimrc  ${homedir}/.vimrc
-  mkdir -p ${homedir}/.vim && cp -r ${script_dir}/_vim/* ${homedir}/.vim
-  # in vim: vim %.vba.gz : so % :q
-}
-
-install_wtrc() {
-  # wtrc
-  cp ${script_dir}/wtrc ${homedir}/.wtrc
-}
-
-install_tmux_conf_and_plugin() {
-  # tmux
-  cp ${script_dir}/tmux.conf ${homedir}/.tmux.conf
-  if [ ! -d ${homedir}/.tmux/tmux-resurrect ]; then
-	sudo -S -u ${username} sh -c "(mkdir -p ${homedir}/.tmux &&
-	  cd ${homedir}/.tmux &&
-	  git clone https://github.com/tmux-plugins/tmux-resurrect.git)"
-  fi
-}
-
-install_cmake() {
-  sudo apt-get install -y cmake
-}
-
-install_gnu_mips_tool_chain() {
-  # cross chain
-  sudo apt-get install -y binutils-mips-linux-gnu
-  sudo apt-get install -y cpp-mips-linux-gnu
-  sudo apt-get install -y g++-mips-linux-gnu
-  sudo apt-get install -y gcc-mips-linux-gnu
-  # sudo apt-get install -y gcc-mips-linux-gnu-base
-}
-
-install_scala() {
-  sudo apt-get install -y scala
-}
-
-install_rust() {
-  if ! curl -sSf https://static.rust-lang.org/rustup.sh | sh; then
-	exit -1;
-  fi
-  mkdir -p ${homedir}/.vim/{ftdetect,indent,syntax} &&
-	for d in ftdetect indent syntax ; do
-	  wget -O ${homedir}/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim;
-	done
-}
-
-install_cli_python() {
-  # python libraries
-  sudo apt-get install -y python-pip python3-pip python-virtualenv
-  sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 10
-  sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip2 20
-  sudo pip2 install yd
-}
-
-install_qemu() {
-  # qemu emulator
-  sudo apt-get install -y qemu
-}
-
-install_sdl_library() {
-  sudo apt-get install -y libsdl1.2-dev libsdl2-dev
-  sudo apt-get install -y libgtk2.0-dev
-  sudo apt-get install -y libgtk-3-dev
-
-  # sudo apt-get install -y libsdl1.2-dev:i386
-  # sudo apt-get install -y libsdl2-dev:i386
-}
-
-install_python_libraries() {
-  sudo pip2 install numpy && sudo pip3 install numpy
-  sudo pip2 install scipy && sudo pip3 install scipy
-  sudo pip2 install tensorflow && sudo pip3 install tensorflow
-}
-
-install_python_mysql() {
-  sudo apt-get -y install mysql-server
-  sudo apt-get -y install python-dev
-  sudo apt-get -y install python-mysqldb
-}
-
-install_docker() {
-  sudo apt-get install -y docker.io
-  sudo apt-get install -y docker-compose
-}
-
 install_texlive() {
   # install tex
   # ===========
@@ -271,7 +58,6 @@ install_texlive() {
   sudo apt-get install -y texlive-full texlive texstudio
 }
 
-install_ubuntu_unity_desktop_option=--no-redirect
 install_ubuntu_unity_desktop() {
   sudo apt-get install -y ubuntu-unity-desktop
   dpkg-reconfigure lightdm
@@ -281,112 +67,122 @@ install_indicator_stickynotes() {
   sudo apt-get install -y indicator-stickynotes
 }
 
-install_shadowsocks() {
-  sudo apt-get install -y shadowsocks-qt5
+install_media_codecs() {
+  sudo apt-get install -y ubuntu-restricted-extras
 }
 
-install_proxychains4() {
+quick_env() {
+  # git configure
+  sudo -S -u ${username} sh -c '
+  git config --global user.name ouxianfei
+  git config --global user.email ouxianfei@smail.nju.edu.cn
+  git config --global core.editor vim
+  git config --global color.ui true
+  git config --global push.default simple
+  '
+
+  # zsh-vim-mode
+  # sudo -S -u ${username} cp ${script_dir}/zsh-vim-mode.plugin.zsh ${homedir}/.zsh-vim-mode.plugin.zsh
+  # insert_to_file "source ${homedir}/.zsh-vim-mode.plugin.zsh" ${homedir}/.zshrc
+
+  # wtrc
+  cp ${script_dir}/wtrc ${homedir}/.wtrc
+
+  # oh-my-zsh
+  sudo apt-get install zsh
+  sudo -S -u ${username} sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - 2>/dev/null)"
+  if sudo -S -u ${username} chsh -s $(which zsh); then
+    sed -i 's/ZSH_THEME=".*"/ZSH_THEME="wierton"/g' ${homedir}/.zshrc
+
+    # environment
+    insert_to_file "source ${homedir}/.wtrc" ${homedir}/.zshrc
+    insert_to_file "source ${homedir}/.wtrc" ${homedir}/.bashrc
+
+    # oh-my-zsh config
+    sudo -S -u ${username} cp ${script_dir}/wierton.zsh-theme ${homedir}/.oh-my-zsh/themes
+  fi
+
+  insert_to_file "unsetopt BG_NICE" ${homedir}/.zshrc
+  # insert_to_file "unsetopt BG_NICE" ${homedir}/.bashrc
+
+  # autojump for zsh
+  sudo apt-get install -y autojump
+  insert_to_file ". /usr/share/autojump/autojump.zsh" ${homedir}/.zshrc
+  insert_to_file ". /usr/share/autojump/autojump.bash" ${homedir}/.bashrc
+
+  cp ${script_dir}/clang-format ${homedir}/.clang-format
+
+  # numlock
+  sudo apt-get install -y numlockx
+  insert_to_file "numlockx on" /etc/profile
+
+  # vimrc
+  cp ${script_dir}/vimrc  ${homedir}/.vimrc
+  mkdir -p ${homedir}/.vim && cp -r ${script_dir}/_vim/* ${homedir}/.vim
+  # in vim: vim %.vba.gz : so % :q
+
+  # tmux-recover
+  cp ${script_dir}/tmux.conf ${homedir}/.tmux.conf
+  if [ ! -d ${homedir}/.tmux/tmux-resurrect ]; then
+	sudo -S -u ${username} sh -c "(mkdir -p ${homedir}/.tmux &&
+	  cd ${homedir}/.tmux &&
+	  git clone https://github.com/tmux-plugins/tmux-resurrect.git)"
+  fi
+
+  # proxychains4
   sudo apt-get install -y proxychains4
   sed -i 's/socks4  127.0.0.1 9050/socks5  127.0.0.1 1080/g' /etc/proxychains4.conf
   # sudo proxychains4 wget www.google.com
 }
 
-install_sogou_input_method() {(
-  deb='sogoupinyin_2.2.0.0108_amd64.deb'
-  wget 'http://cdn2.ime.sogou.com/dl/index/1524572264/sogoupinyin_2.2.0.0108_amd64.deb?st=75v1t9lv53p0PiYsQgDKTQ&e=1540289819&fn=sogoupinyin_2.2.0.0108_amd64.deb' -O $deb
-  dpkg -i $deb
-  sogou-diag
-)}
-
-install_netease_cloud_music() {(
-  deb='netease-cloud-music_1.1.0_amd64_ubuntu.deb'
-  wget 'http://202.119.32.195/cache/10/01/d1.music.126.net/6c825290adfb69e71558de8c37c44b13/netease-cloud-music_1.1.0_amd64_ubuntu.deb' -O $deb
-  dpkg -i $deb
-)}
-
-install_google_chrome_stable() {(
-  deb='google-chrome-stable_current_amd64.deb'
-  wget 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' -O $deb
-  dpkg -i $deb
-)}
-
-install_mplayer() {(
-  sudo apt-get install -y mplayer
-)}
-
-install_fonts() {(
-  sudo apt-get install -y ttf-wqy-microhei
-  sudo apt-get install -y ttf-wqy-zenhei
-  sudo apt-get install -y xfonts-wqy
-)}
-
-install_libpaxos() {(
-  sudo apt-get install -y libevent-dev libmsgpack-dev
-  git clone https://github.com/JiYou/cpaxos &&
-	cd cpaxos && mkdir output && cd output && cmake .. &&
-	make
-)}
-
-install_media_codecs() {
-  sudo apt-get install -y ubuntu-restricted-extras
-}
-
-run_install_instance() {(
-  eval option=$(echo \${install_${i}_option})
-  if [ "$option"s == "--no-redirect"s ]; then
-	install_${i}
-  else
-	install_${i} &>> install.log
-  fi
-)}
-
-install() {
-  for i in $*; do
-	printf "\e[34mINSTALLING ${i} ...\e[0m"
-	if run_install_instance ${i}; then
-	  echo -e "\e[32mSUCCESSFULLY!\e[0m"
-	else
-	  echo -e "\e[31mFAILED!\e[0m"
-	fi
-  done | tee -a install.log
-}
-
 install_cli() {
-  # use_tsinghua_source
-  install_extra_cli_source
+  # sbt source
+  echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+  sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
 
   sudo apt-get update
+  
+  sudo apt-get install -y verilator libboost-all-dev \
+    libllvm6.0 libclang-6.0-dev libreadline-dev \
+    libllvm10 libclang-10-dev \
+    flex bison valgrind curl httpie cppman \
+    tmux git zsh vim unzip unrar moreutils cmake \
+    scala python3-pip qemu sbt \
+    binutils-mips-linux-gnu \
+    cpp-mips-linux-gnu g++-mips-linux-gnu \
+    gcc-mips-linux-gnu
 
-  install verilator boost_libraries llvm_library \
-	clang_library readline_library parser_tools useful_tool \
-	gcc_8 gcc_multilib clang_6 develop_essential \
-	numlockx vimrc wtrc cli_python qemu \
-	tmux_conf_and_plugin cmake gnu_mips_tool_chain \
-	git_configure oh_my_zsh autojump scala rust sbt
+  sudo pip3 install numpy scipy tensorflow
+
+  # conflict with cross toolchain
+  # sudo apt-get install -y gcc-8-multilib g++-8-multilib
+
+  quick_env
 }
 
 install_gui() {
-  install_extra_gui_source
-  sudo apt-get update
+  install_cli
 
-  install sdl_library python_libraries python_mysql docker \
-	texlive ubuntu_unity_desktop indicator_stickynotes \
-	shadowsocks proxychains4 media_codecs \
-	sogou_input_method netease_cloud_music google_chrome_stable \
-    mplayer
-}
+  sudo apt-get -y install docker.io docker-compose \
+    texlive-full texlive texstudio \
+    ubuntu-unity-desktop \
+    proxychains4 mplayer ubuntu-restricted-extras \
+    xsel libsdl1.2-dev libsdl2-dev \
+    libgtk2.0-dev libgtk-3-dev \
+    fonts-wqy-microhei fonts-wqy-zenhei xfonts-wqy
 
-quick_env() {
-  install vimrc wtrc tmux_conf_and_plugin \
-	git_configure oh_my_zsh autojump clangformat
+  sudo snap install qv2ray
+  # fonts for deepinwine-qq
+  # ttf-wqy-microhei ttf-wqy-zenhei xfonts-wqy
+  # -> fonts-wqy-microhei fonts-wqy-zenhei
+
+
+  deb='google-chrome-stable_current_amd64.deb'
+  wget 'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb' -O $deb
+  dpkg -i $deb
 }
 
 check_basic_config
 install_cli
-install_gui
+# install_gui
 # quick_env
-
-# post_install_oh_my_zsh
-
-# autoremove
-# sudo apt-get autoremove
