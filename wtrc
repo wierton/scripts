@@ -24,7 +24,8 @@ function sedr() {
 }
 
 function renamer() {
-  rename "s/$1/$2/g" `find . -name "*$1*"`
+	find . -name "*$1*" -print0 | rename -0 "s/$1/$2/g"
+  return $?
 }
 
 function banio() {
