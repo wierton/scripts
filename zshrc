@@ -2,6 +2,10 @@
 
 export PATH=$PATH:$HOME/.local/bin
 
+# .oh-my-zsh/themes/wierton.zsh-theme
+# local ret_status="%(?:%{$fg_bold[green]%}->:%{$fg_bold[red]%}->)"
+# PROMPT='${ret_status} %{$fg[cyan]%}%c%{$fg[red]%} $%{$reset_color%} '
+
 # Uncomment the following line to use case-sensitive completion.
 CASE_SENSITIVE="true"
 
@@ -10,7 +14,7 @@ CASE_SENSITIVE="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+# plugins=(git)
 
 # Theme
 export ZSH="$HOME/.oh-my-zsh"
