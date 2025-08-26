@@ -49,3 +49,6 @@ au FileType c,cpp setl cindent cinoptions+=:0
 set foldcolumn=0 
 setlocal foldlevel=1 
 nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR> 
+
+vnoremap <C-y> :w! ~/.vim.clipboard<CR>
+nnoremap <C-p> :r ~/.vim.clipboard<CR>
