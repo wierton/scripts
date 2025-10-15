@@ -63,6 +63,6 @@ alias sudo-perm="sudo sh -c exit"
 alias open-psmouse="sudo-perm && sudo modprobe -i psmouse"
 alias close-psmouse="sudo-perm && sudo modprobe -r psmouse"
 
-if [ -f .envrc ]; then
-  source .envrc;
+if [ -f $HOME/.envrc ]; then
+  source $HOME/.envrc;
 fi
