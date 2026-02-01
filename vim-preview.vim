@@ -148,7 +148,7 @@ function! s:BuildPythonCmd(path) abort
   " 拼成：python3 -c "<code>" -- "<path>"
   return g:binary_preview_python
         \ . ' -c ' . shellescape(l:py)
-        \ . ' -- ' . shellescape(a:path)
+        \ . ' ' . shellescape(a:path)
 endfunction
 
 " 在预览 buffer 写完内容后锁住（避免误改）
