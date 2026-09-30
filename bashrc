@@ -15,3 +15,4 @@ fi
 bind 'set show-all-if-ambiguous on'
 bind 'set menu-complete-display-prefix on'
 bind '"\t": menu-complete'
+bind '"\e[Z": menu-complete-backward'
