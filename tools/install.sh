@@ -4,7 +4,7 @@
 username=$(logname)
 homedir=$(eval echo "~$username")
 passwd=123456
-script_dir=$(cd `dirname $0` && pwd)
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 
 cd ${homedir}
 
@@ -82,7 +82,7 @@ quick_env() {
   '
 
   # zsh-vim-mode
-  # sudo -S -u ${username} cp ${script_dir}/zsh-vim-mode.plugin.zsh ${homedir}/.zsh-vim-mode.plugin.zsh
+  # sudo -S -u ${username} cp ${script_dir}/config/zsh-vim-mode.plugin.zsh ${homedir}/.zsh-vim-mode.plugin.zsh
   # insert_to_file "source ${homedir}/.zsh-vim-mode.plugin.zsh" ${homedir}/.zshrc
 
   # wtrc
@@ -110,7 +110,7 @@ quick_env() {
   insert_to_file ". /usr/share/autojump/autojump.zsh" ${homedir}/.zshrc
   insert_to_file ". /usr/share/autojump/autojump.bash" ${homedir}/.bashrc
 
-  cp ${script_dir}/clang-format ${homedir}/.clang-format
+  cp ${script_dir}/config/clang-format ${homedir}/.clang-format
 
   # numlock
   sudo apt-get install -y numlockx
@@ -118,7 +118,7 @@ quick_env() {
 
   # vimrc
   cp ${script_dir}/vimrc  ${homedir}/.vimrc
-  mkdir -p ${homedir}/.vim && cp -r ${script_dir}/_vim/* ${homedir}/.vim
+  mkdir -p ${homedir}/.vim && cp -r ${script_dir}/config/_vim/* ${homedir}/.vim
   # in vim: vim %.vba.gz : so % :q
 
   # tmux-recover

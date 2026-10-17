@@ -3,7 +3,7 @@ set -v on
 
 username=wierton
 homedir=/home/${username}
-script_dir=`pwd`
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 
 cd ${homedir}
 
@@ -100,7 +100,7 @@ echo "source ${homedir}/.wtrc" >> ${homedir}/.zshrc
 echo "source ${homedir}/.wtrc" >> ${homedir}/.bashrc
 
 # oh-my-zsh config
-sudo -S -u ${username} cp wierton.zsh-theme ${homedir}/.oh-my-zsh/themes
+sudo -S -u ${username} cp "${script_dir}/wierton.zsh-theme" ${homedir}/.oh-my-zsh/themes
 
 # autojump
 apt-get install -y autojump
